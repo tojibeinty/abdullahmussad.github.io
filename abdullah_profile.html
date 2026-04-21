@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>عبد الله مساعد</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #f5f5f5; font-family: 'Tajawal', sans-serif; direction: rtl; }
+    .page { max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ===== HERO ===== */
+    .hero { display: flex; align-items: center; gap: 1.5rem; padding: 1.5rem; background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; margin-bottom: 2rem; }
+    .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid #1D9E75; flex-shrink: 0; background: #f0f0f0; }
+    .avatar-initials { width: 90px; height: 90px; border-radius: 50%; border: 2px solid #1D9E75; display: none; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; background: #E1F5EE; color: #085041; flex-shrink: 0; }
+    .hero-name { font-size: 22px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .hero-title { font-size: 13px; color: #1D9E75; font-weight: 500; margin-bottom: 10px; }
+    .hero-bio { font-size: 13px; color: #666; line-height: 1.75; margin-bottom: 10px; }
+    .contact-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .contact-chip { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #555; background: #f7f7f7; padding: 4px 10px; border-radius: 20px; border: 0.5px solid #e0e0e0; cursor: pointer; text-decoration: none; }
+    .contact-chip:hover { border-color: #1D9E75; }
+    .contact-chip svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ===== SECTION LABEL ===== */
+    .section-label { font-size: 12px; font-weight: 500; color: #888; letter-spacing: 0.06em; margin-bottom: 1rem; text-transform: uppercase; }
+
+    /* ===== BOOKS ===== */
+    .books-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
+    .book-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; text-align: center; position: relative; overflow: hidden; }
+    .book-card:hover { border-color: #1D9E75; transform: translateY(-2px); }
+    .book-badge { display: inline-block; background: #E1F5EE; color: #085041; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 0.75rem; }
+    .book-cover { width: 56px; height: 72px; border-radius: 4px; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; box-shadow: 2px 4px 12px rgba(0,0,0,0.12); }
+    .book-title { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .book-sub { font-size: 12px; color: #888; }
+    .new-badge { position: absolute; top: 10px; right: 10px; background: #D85A30; color: white; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; }
+
+    /* ===== DIVIDER ===== */
+    .divider { height: 0.5px; background: #e5e5e5; margin-bottom: 2rem; }
+
+    /* ===== STAINS ===== */
+    .stains-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 2rem; }
+    .stain-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.15s; }
+    .stain-card:hover { border-color: #1D9E75; transform: translateY(-2px); }
+    .stain-img { width: 100%; height: 72px; object-fit: cover; display: block; }
+    .stain-img-placeholder { width: 100%; height: 72px; display: none; align-items: center; justify-content: center; font-size: 22px; }
+    .stain-body { padding: 8px 10px; text-align: center; }
+    .stain-name { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 1px; }
+    .stain-type { font-size: 11px; color: #888; }
+
+    /* ===== MODAL ===== */
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: flex-end; justify-content: center; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background: #fff; border-radius: 20px 20px 0 0; padding: 1.5rem; width: 100%; max-width: 480px; animation: slideUp 0.25s ease; max-height: 90vh; overflow-y: auto; }
+    @keyframes slideUp { from { transform: translateY(60px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 1.25rem; }
+    .modal-badge-teal { display: inline-block; background: #E1F5EE; color: #085041; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+    .modal-badge-blue { display: inline-block; background: #E6F1FB; color: #0C447C; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+    .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 0.5rem; }
+    .modal-desc { font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 1.25rem; }
+    .modal-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 1.25rem; display: block; }
+    .modal-img-placeholder { width: 100%; height: 160px; border-radius: 12px; margin-bottom: 1.25rem; display: none; align-items: center; justify-content: center; font-size: 48px; background: #f5f5f5; }
+    .feature-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #666; margin-bottom: 8px; }
+    .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; margin-top: 6px; flex-shrink: 0; }
+    .order-form { background: #f7f7f7; border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; }
+    .order-form h3 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 10px; }
+    .form-group label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+    .form-group input { width: 100%; padding: 9px 12px; font-size: 13px; font-family: 'Tajawal', sans-serif; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #111; outline: none; direction: rtl; }
+    .form-group input:focus { border-color: #1D9E75; }
+    .btn-order { width: 100%; padding: 12px; background: #1D9E75; color: white; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-order:hover { background: #0F6E56; }
+    .btn-order svg { width: 18px; height: 18px; }
+    .close-btn { float: left; background: #f0f0f0; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; color: #666; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
+    .close-btn:hover { color: #111; }
+
+    @media (max-width: 520px) {
+      .hero { flex-direction: column; text-align: center; }
+      .books-grid { grid-template-columns: 1fr; }
+      .stains-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ===== HERO ===== -->
+  <div class="hero">
+    <img class="avatar" src="YOUR_PHOTO_URL_HERE"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+         alt="عبد الله مساعد" />
+    <div class="avatar-initials">ع م</div>
+    <div style="flex:1;">
+      <div class="hero-name">عبد الله مساعد</div>
+      <div class="hero-title">مؤلف ومدرب معتمد ومخترع عراقي</div>
+      <div class="hero-bio">متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.</div>
+      <div class="contact-row">
+
+        <!-- الهاتف -->
+        <div class="contact-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.06 1.18 2 2 0 012.08 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+          </svg>
+          <span>YOUR_PHONE_HERE</span>
+        </div>
+
+        <!-- تيليجرام -->
+        <div class="contact-chip">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+          </svg>
+          <span>تيليجرام</span>
+        </div>
+
+        <!-- انستغرام -->
+        <a class="contact-chip" href="https://instagram.com/YOUR_INSTAGRAM_HERE" target="_blank" style="color:#C13584;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#C13584" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="1" fill="#C13584" stroke="none"/>
+          </svg>
+          <span>YOUR_INSTAGRAM_HERE</span>
+        </a>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== BOOKS ===== -->
+  <div class="section-label">الكتب المختبرية</div>
+  <div class="books-grid">
+
+    <div class="book-card" onclick="openBook('GUE')">
+      <div class="new-badge">جديد</div>
+      <div class="book-badge">كتاب طبي</div>
+      <div class="book-cover" style="background:linear-gradient(135deg,#1D9E75,#085041);">GUE</div>
+      <div class="book-title">GUE</div>
+      <div class="book-sub">فحص البول العام</div>
+    </div>
+
+    <div class="book-card" onclick="openBook('GSE')">
+      <div class="new-badge">جديد</div>
+      <div class="book-badge">كتاب طبي</div>
+      <div class="book-cover" style="background:linear-gradient(135deg,#185FA5,#042C53);">GSE</div>
+      <div class="book-title">GSE</div>
+      <div class="book-sub">فحص البراز العام</div>
+    </div>
+
+    <div class="book-card" onclick="openBook('CSF')">
+      <div class="new-badge">جديد</div>
+      <div class="book-badge">كتاب طبي</div>
+      <div class="book-cover" style="background:linear-gradient(135deg,#D85A30,#4A1B0C);">CSF</div>
+      <div class="book-title">CSF</div>
+      <div class="book-sub">السائل الدماغي الشوكي</div>
+    </div>
+
+  </div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider"></div>
+
+  <!-- ===== STAINS ===== -->
+  <div class="section-label">الصبغات المختبرية</div>
+  <div class="stains-grid">
+
+    <div class="stain-card" onclick="openStain('methylene_blue')">
+      <img class="stain-img" src="METHYLENE_BLUE_IMG_URL"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Methylene Blue" />
+      <div class="stain-img-placeholder" style="background:#DBEAFE;">🔵</div>
+      <div class="stain-body">
+        <div class="stain-name">Methylene Blue</div>
+        <div class="stain-type">أزرق</div>
+      </div>
+    </div>
+
+    <div class="stain-card" onclick="openStain('diff_quick')">
+      <img class="stain-img" src="DIFF_QUICK_IMG_URL"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Diff Quick" />
+      <div class="stain-img-placeholder" style="background:#EDE9FE;">🧪</div>
+      <div class="stain-body">
+        <div class="stain-name">Diff Quick</div>
+        <div class="stain-type">صبغة سريعة</div>
+      </div>
+    </div>
+
+    <div class="stain-card" onclick="openStain('toludin')">
+      <img class="stain-img" src="TOLUDIN_IMG_URL"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Toludin" />
+      <div class="stain-img-placeholder" style="background:#BFDBFE;">🫐</div>
+      <div class="stain-body">
+        <div class="stain-name">Toludin</div>
+        <div class="stain-type">صبغة مجهرية</div>
+      </div>
+    </div>
+
+    <div class="stain-card" onclick="openStain('galaxia')">
+      <img class="stain-img" src="GALAXIA_IMG_URL"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Galaxia" />
+      <div class="stain-img-placeholder" style="background:#EDE9FE;">🌌</div>
+      <div class="stain-body">
+        <div class="stain-name">Galaxia</div>
+        <div class="stain-type">صبغة مركّبة</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-backdrop" id="modal-backdrop" onclick="closeIfBackdrop(event)">
+  <div class="modal" id="modal-box">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+const BOOKS = {
+  GUE: {
+    badgeClass: 'modal-badge-teal', badge: 'كتاب مختبري',
+    title: 'GUE — General Urine Examination',
+    desc: 'كتاب متخصص يغطي جميع جوانب فحص البول العام بأسلوب علمي حديث ومبسّط. يربط المفاهيم النظرية بالتطبيق العملي داخل المختبر.',
+    features: ['تفسير شامل لنتائج فحص البول', 'ربط النتائج بالحالات السريرية', 'صور توضيحية ومخططات علمية']
+  },
+  GSE: {
+    badgeClass: 'modal-badge-blue', badge: 'كتاب مختبري',
+    title: 'GSE — General Stool Examination',
+    desc: 'مرجع علمي شامل يتناول فحص البراز العام. يشرح الطرق الحديثة في التحليل وتمييز الطفيليات والبكتيريا وتفسير النتائج.',
+    features: ['تغطية كاملة لأنواع الطفيليات المعوية', 'أساليب التلوين والفحص المجهري', 'إرشادات لجمع العينات وتخزينها']
+  },
+  CSF: {
+    badgeClass: 'modal-badge-teal', badge: 'كتاب مختبري',
+    title: 'CSF — Cerebrospinal Fluid Analysis',
+    desc: 'كتاب متخصص في تحليل السائل الدماغي الشوكي. يشرح التحليل الفيزيائي والكيميائي والمجهري ودوره في تشخيص أمراض الجهاز العصبي.',
+    features: ['شرح الخصائص الفيزيائية للسائل', 'التحليل الكيميائي والخلوي المفصّل', 'التشخيص التفريقي لأمراض السحايا']
+  }
+};
+
+const STAINS = {
+  methylene_blue: {
+    name: 'Methylene Blue', img: 'METHYLENE_BLUE_IMG_URL',
+    desc: 'صبغة الميثيلين الزرقاء من أقدم وأكثر الصبغات المختبرية استخداماً. تُستخدم لتلوين المسحات والعينات المختبرية وإبراز التفاصيل الدقيقة في الفحص المجهري بدقة عالية.'
+  },
+  diff_quick: {
+    name: 'Diff Quick', img: 'DIFF_QUICK_IMG_URL',
+    desc: 'صبغة Diff Quick سريعة الاستخدام، مصممة للحصول على نتائج احترافية في وقت قياسي. تُستخدم على نطاق واسع في تلوين المسحات الدموية والمسحات المختبرية العامة.'
+  },
+  toludin: {
+    name: 'Toludin', img: 'TOLUDIN_IMG_URL',
+    desc: 'صبغة التولويدين متعددة الاستخدامات، تُعطي تلويناً واضحاً ومميزاً لمكونات العينة المختلفة. مناسبة لأنواع متعددة من الفحوصات المجهرية في المختبرات الطبية.'
+  },
+  galaxia: {
+    name: 'Galaxia', img: 'GALAXIA_IMG_URL',
+    desc: 'صبغة Galaxia تركيبة متطورة تجمع خصائص عدة صبغات في منتج واحد. توفر تلويناً عميقاً ومتوازناً يُسهّل تمييز التفاصيل الدقيقة وتُعطي صورة مجهرية احترافية.'
+  }
+};
+
+// ==============================
+// غيّر هذه القيم فقط:
+const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+const CHAT_ID   = 'YOUR_CHAT_ID_HERE';
+// ==============================
+
+function buildOrderForm(itemName) {
+  const safe = itemName.replace(/'/g, "\\'");
+  return `
+    <div class="order-form">
+      <h3>اطلب الآن</h3>
+      <div class="form-group">
+        <label>اسمك الكريم</label>
+        <input type="text" id="f-name" placeholder="عبد الرحمن علي..." />
+      </div>
+      <div class="form-group">
+        <label>عنوانك (المحافظة / المنطقة)</label>
+        <input type="text" id="f-addr" placeholder="بغداد - الكرخ..." />
+      </div>
+      <div class="form-group">
+        <label>رقم هاتفك</label>
+        <input type="tel" id="f-phone" placeholder="07xxxxxxxxx" />
+      </div>
+      <button class="btn-order" onclick="sendTelegram('${safe}')">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/>
+        </svg>
+        إرسال الطلب عبر تيليجرام
+      </button>
+    </div>`;
+}
+
+function openBook(key) {
+  const b = BOOKS[key];
+  const feats = b.features.map(f =>
+    `<div class="feature-item"><div class="feature-dot"></div><span>${f}</span></div>`
+  ).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="${b.badgeClass}">${b.badge}</div>
+    <div class="modal-title">${b.title}</div>
+    <div class="modal-desc">${b.desc}</div>
+    <div style="margin-bottom:1.25rem;">${feats}</div>
+    ${buildOrderForm(b.title)}`;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function openStain(key) {
+  const s = STAINS[key];
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-badge-blue">صبغة مختبرية</div>
+    <div class="modal-title">${s.name}</div>
+    <img class="modal-img" src="${s.img}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+         alt="${s.name}" />
+    <div class="modal-img-placeholder">🧪</div>
+    <div class="modal-desc">${s.desc}</div>
+    ${buildOrderForm(s.name)}`;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function sendTelegram(itemName) {
+  const name  = document.getElementById('f-name').value.trim();
+  const addr  = document.getElementById('f-addr').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  if (!name || !addr || !phone) { alert('يرجى تعبئة جميع الحقول'); return; }
+  const text = `📦 طلب جديد\n\nالمنتج: ${itemName}\nالاسم: ${name}\nالعنوان: ${addr}\nالهاتف: ${phone}`;
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`)
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok) {
+        document.getElementById('modal-content').innerHTML = `
+          <div style="text-align:center;padding:2.5rem 1rem;">
+            <div style="width:64px;height:64px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:28px;color:#1D9E75;">✓</div>
+            <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:8px;">تم إرسال طلبك!</div>
+            <div style="font-size:14px;color:#666;">شكراً ${name}، سيتواصل معك عبد الله مساعد قريباً.</div>
+          </div>`;
+      } else {
+        alert('تعذّر الإرسال — تحقق من توكن البوت والـ Chat ID.');
+      }
+    })
+    .catch(() => alert('خطأ في الاتصال.'));
+}
+
+function closeModal() { document.getElementById('modal-backdrop').classList.remove('open'); }
+function closeIfBackdrop(e) { if (e.target.id === 'modal-backdrop') closeModal(); }
+</script>
+</body>
+</html>
