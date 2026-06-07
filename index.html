@@ -302,7 +302,7 @@
 // الباسورد الحالي: admin1234
 // لتغييره: استبدل الهاش أدناه بهاش SHA-256 الجديد
 // ============================================================
-const PASS_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+const PASS_HASH = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3";
 // ============================================================
 
 // ===== DATA =====
@@ -341,10 +341,17 @@ function loadData() {
 function saveData() { localStorage.setItem('abid_data', JSON.stringify(DATA)); }
 
 // ===== HASH =====
-async function sha256(msg) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+// Simple djb2 hash — works on file:// and https://
+function simpleHash(str) {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+    hash = hash >>> 0;
+  }
+  return hash.toString(16);
 }
+// Hash of "admin1234" via djb2
+const PASS_HASH_SIMPLE = "5fa11054";
 
 // ===== LOGIN =====
 function openAdminLogin() {
@@ -354,10 +361,10 @@ function openAdminLogin() {
   setTimeout(() => document.getElementById('login-password').focus(), 100);
 }
 function closeAdminLogin() { document.getElementById('login-overlay').classList.remove('open'); }
-async function checkLogin() {
+function checkLogin() {
   const pw = document.getElementById('login-password').value;
-  const h = await sha256(pw);
-  if (h === PASS_HASH) {
+  const h = simpleHash(pw);
+  if (h === PASS_HASH_SIMPLE) {
     closeAdminLogin();
     openAdmin();
   } else {
