@@ -160,7 +160,7 @@
          alt="عبد الله مساعد" />
     <div class="avatar-initials">ع م</div>
     <div style="flex:1;">
-      <div class="hero-name" id="hero-name">عبد الله مساعد</div>
+      <div class="hero-name" id="hero-name" onclick="handleNameTap()" style="cursor:default;user-select:none;">عبد الله مساعد</div>
       <div class="hero-title" id="hero-title">مؤلف ومدرب معتمد ومخترع عراقي</div>
       <div class="hero-bio" id="hero-bio">متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.</div>
       <div class="contact-row">
@@ -217,12 +217,7 @@
   </div>
 </div>
 
-<!-- ===== ADMIN FAB ===== -->
-<button class="admin-fab" onclick="openAdminLogin()" title="لوحة الإدارة">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-  </svg>
-</button>
+<!-- ===== ADMIN FAB (hidden) ===== -->
 
 <!-- ===== LOGIN OVERLAY ===== -->
 <div class="login-overlay" id="login-overlay">
@@ -819,6 +814,15 @@ function previewCourseImg(id) {
     if (url) { wrap.style.display = 'block'; const img = wrap.querySelector('img'); if(img){img.src=url;img.style.display='';} }
     else { wrap.style.display = 'none'; }
   }
+}
+
+// ===== SECRET TAP (5x on name) =====
+let _tapCount = 0, _tapTimer = null;
+function handleNameTap() {
+  _tapCount++;
+  clearTimeout(_tapTimer);
+  if (_tapCount >= 5) { _tapCount = 0; openAdminLogin(); return; }
+  _tapTimer = setTimeout(() => { _tapCount = 0; }, 1500);
 }
 
 // ===== INIT =====
