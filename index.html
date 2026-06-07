@@ -142,11 +142,31 @@
     .login-error { color: #B91C1C; font-size: 13px; margin-top: 8px; display: none; }
     .login-error.show { display: block; }
 
+    /* ===== APP SECTION ===== */
+    .app-section { background: linear-gradient(135deg,#0d1f1a 0%,#0a2e22 60%,#064030 100%); border-radius: 20px; padding: 2rem 1.5rem; margin-bottom: 2.5rem; color: #fff; position: relative; overflow: hidden; }
+    .app-section::before { content:''; position:absolute; top:-40px; left:-40px; width:180px; height:180px; border-radius:50%; background:rgba(29,158,117,0.12); pointer-events:none; }
+    .app-section::after  { content:''; position:absolute; bottom:-30px; right:-30px; width:130px; height:130px; border-radius:50%; background:rgba(29,158,117,0.08); pointer-events:none; }
+    .app-label { font-size:11px; font-weight:600; letter-spacing:.08em; color:#1D9E75; margin-bottom:.5rem; text-transform:uppercase; }
+    .app-title { font-size:22px; font-weight:700; color:#fff; margin-bottom:.5rem; line-height:1.3; }
+    .app-sub   { font-size:13px; color:rgba(255,255,255,.6); margin-bottom:1.5rem; }
+    .app-features { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:1.75rem; }
+    .app-feat { display:flex; align-items:center; gap:8px; font-size:13px; color:rgba(255,255,255,.85); }
+    .app-feat-icon { width:32px; height:32px; border-radius:8px; background:rgba(29,158,117,0.2); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+    .app-btns { display:flex; gap:10px; flex-wrap:wrap; }
+    .app-btn { display:flex; align-items:center; gap:8px; padding:10px 18px; border-radius:12px; font-family:'Tajawal',sans-serif; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; border:none; transition:transform .15s,opacity .15s; }
+    .app-btn:hover { transform:translateY(-2px); opacity:.92; }
+    .app-btn-android { background:#fff; color:#111; }
+    .app-btn-ios     { background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.25); }
+    .app-btn svg { width:20px; height:20px; flex-shrink:0; }
+
     @media (max-width: 520px) {
       .hero { flex-direction: column; text-align: center; }
       .books-grid { grid-template-columns: 1fr; }
       .stains-grid { grid-template-columns: repeat(2, 1fr); }
       .courses-grid { grid-template-columns: 1fr; }
+      .app-features { grid-template-columns: 1fr; }
+      .app-btns { flex-direction: column; }
+      .app-btn { justify-content: center; }
     }
   </style>
 </head>
@@ -202,6 +222,12 @@
   <!-- ===== DIVIDER ===== -->
   <div class="divider"></div>
 
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider"></div>
+
+  <!-- ===== APP ===== -->
+  <div id="app-section-wrap"></div>
+
   <!-- ===== COURSES ===== -->
   <div class="section-label">الدورات المختبرية</div>
   <div class="courses-grid" id="courses-grid"></div>
@@ -247,6 +273,7 @@
       <button class="admin-tab" onclick="switchTab('books')">الكتب</button>
       <button class="admin-tab" onclick="switchTab('stains')">الصبغات</button>
       <button class="admin-tab" onclick="switchTab('courses')">الدورات</button>
+      <button class="admin-tab" onclick="switchTab('app')">📱 التطبيق</button>
     </div>
     <div class="admin-body">
 
@@ -291,6 +318,37 @@
         <div id="courses-admin-list"></div>
       </div>
 
+      <!-- ===== TAB: APP ===== -->
+      <div class="admin-section" id="tab-app">
+        <div class="admin-success" id="app-success">✅ تم الحفظ بنجاح</div>
+        <div class="admin-card">
+          <div class="admin-card-header"><div class="admin-card-title">📱 إعدادات قسم التطبيق</div></div>
+          <div class="admin-field">
+            <label>إظهار القسم في الصفحة</label>
+            <select id="app-visible">
+              <option value="true">✅ ظاهر</option>
+              <option value="false">🚫 مخفي</option>
+            </select>
+          </div>
+          <div class="admin-field"><label>عنوان التطبيق</label><input type="text" id="app-title" /></div>
+          <div class="admin-field"><label>وصف مختصر</label><input type="text" id="app-sub" /></div>
+          <div class="admin-field">
+            <label>رابط Google Play (Android)</label>
+            <input type="text" id="app-android" placeholder="https://play.google.com/store/apps/..." />
+          </div>
+          <div class="admin-field">
+            <label>رابط App Store (iOS)</label>
+            <input type="text" id="app-ios" placeholder="https://apps.apple.com/..." />
+          </div>
+          <div class="admin-field">
+            <label>مميزات التطبيق (إيموجي + نص لكل ميزة)</label>
+            <div class="features-list" id="app-feats-list"></div>
+            <button class="btn-add-feat" onclick="addAppFeat()">+ إضافة ميزة</button>
+          </div>
+          <button class="btn-save" onclick="saveApp()" style="margin-top:8px;">💾 حفظ التطبيق</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -329,7 +387,20 @@ let DATA = {
   courses: [
     { id: 'c1', title: 'دورة فحص البول المتقدم', sub: 'تشخيص ومختبر', icon: '🔬', iconBg: '#E1F5EE', desc: 'دورة شاملة تغطي جميع جوانب فحص البول من الناحية العملية والنظرية. مناسبة لأخصائيي المختبرات والطلاب.', features: ['الفحص الفيزيائي والكيميائي','تفسير النتائج المجهرية','حالات عملية وتشخيصية'], price: '', isNew: true },
     { id: 'c2', title: 'دورة الطفيليات المعوية', sub: 'علم الطفيليات', icon: '🧫', iconBg: '#FFF3E0', desc: 'دورة متخصصة في تشخيص وتمييز الطفيليات المعوية بالفحص المجهري. مع تطبيقات عملية على عينات حقيقية.', features: ['تمييز أنواع الطفيليات','أساليب تحضير العينات','تفسير نتائج الفحص'], price: '', isNew: false }
-  ]
+  ],
+  app: {
+    visible: true,
+    title: 'تطبيق عبد الله مساعد',
+    sub: 'تعلّم المختبرات الطبية بأسلوب تفاعلي حديث',
+    features: [
+      { icon: '🎬', label: 'دروس فيديو' },
+      { icon: '📝', label: 'اختبارات تفاعلية' },
+      { icon: '🏅', label: 'شهادات معتمدة' },
+      { icon: '📊', label: 'متابعة التقدم' }
+    ],
+    androidUrl: '',
+    iosUrl: ''
+  }
 };
 
 // Load from localStorage if exists
@@ -390,6 +461,10 @@ function switchTab(tab) {
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   event.target.classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'books') renderBooksAdmin();
+  if (tab === 'stains') renderStainsAdmin();
+  if (tab === 'courses') renderCoursesAdmin();
+  if (tab === 'app') populateAppForm();
 }
 function showSuccess(id) {
   const el = document.getElementById(id);
@@ -825,12 +900,92 @@ function handleNameTap() {
   _tapTimer = setTimeout(() => { _tapCount = 0; }, 1500);
 }
 
+// ===== APP SECTION =====
+function renderApp() {
+  const a = DATA.app;
+  const wrap = document.getElementById('app-section-wrap');
+  if (!wrap) return;
+  if (!a || a.visible === false || a.visible === 'false') { wrap.innerHTML = ''; return; }
+  const feats = (a.features||[]).map(f => `
+    <div class="app-feat">
+      <div class="app-feat-icon">${f.icon}</div>
+      <span>${f.label}</span>
+    </div>`).join('');
+  const androidBtn = a.androidUrl ? `
+    <a class="app-btn app-btn-android" href="${a.androidUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341l1.005-1.741a.25.25 0 00-.432-.25l-1.018 1.763A6.238 6.238 0 0112 14.25a6.238 6.238 0 01-5.078-1.137l-1.018-1.763a.25.25 0 00-.432.25l1.005 1.741A6.257 6.257 0 005.75 18.5h12.5a6.257 6.257 0 00-1.727-3.159zM9 17a.75.75 0 110-1.5A.75.75 0 019 17zm6 0a.75.75 0 110-1.5.75.75 0 010 1.5zM5.422 7.813l-1.47-2.547a.25.25 0 01.432-.25l1.488 2.578A12.455 12.455 0 0112 6.75c2.25 0 4.356.594 6.128 1.844l1.488-2.578a.25.25 0 01.432.25l-1.47 2.547A12.478 12.478 0 0124 15.5H0a12.478 12.478 0 015.422-7.687z"/></svg>
+      Google Play
+    </a>` : '';
+  const iosBtn = a.iosUrl ? `
+    <a class="app-btn app-btn-ios" href="${a.iosUrl}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      App Store
+    </a>` : '';
+  wrap.innerHTML = `
+    <div class="section-label">التطبيق</div>
+    <div class="app-section">
+      <div class="app-label">📱 متاح على Android و iOS</div>
+      <div class="app-title">${a.title}</div>
+      <div class="app-sub">${a.sub}</div>
+      <div class="app-features">${feats}</div>
+      <div class="app-btns">${androidBtn}${iosBtn}</div>
+    </div>
+    <div class="divider"></div>`;
+}
+
+function populateAppForm() {
+  const a = DATA.app;
+  document.getElementById('app-visible').value = String(a.visible !== false && a.visible !== 'false');
+  document.getElementById('app-title').value = a.title || '';
+  document.getElementById('app-sub').value = a.sub || '';
+  document.getElementById('app-android').value = a.androidUrl || '';
+  document.getElementById('app-ios').value = a.iosUrl || '';
+  renderAppFeatsAdmin();
+}
+
+function renderAppFeatsAdmin() {
+  const a = DATA.app;
+  document.getElementById('app-feats-list').innerHTML = (a.features||[]).map((f,i) => `
+    <div class="feature-row">
+      <input type="text" style="width:50px;" value="${f.icon}" id="apf-icon-${i}" placeholder="🎬" />
+      <input type="text" value="${f.label}" id="apf-label-${i}" placeholder="اسم الميزة" />
+      <button class="btn-remove-feat" onclick="removeAppFeat(${i})">✕</button>
+    </div>`).join('');
+}
+
+function addAppFeat() {
+  DATA.app.features.push({ icon: '⭐', label: '' });
+  saveData(); renderAppFeatsAdmin();
+}
+
+function removeAppFeat(i) {
+  DATA.app.features.splice(i, 1);
+  saveData(); renderAppFeatsAdmin();
+}
+
+function saveApp() {
+  const a = DATA.app;
+  a.visible = document.getElementById('app-visible').value === 'true';
+  a.title = document.getElementById('app-title').value;
+  a.sub = document.getElementById('app-sub').value;
+  a.androidUrl = document.getElementById('app-android').value;
+  a.iosUrl = document.getElementById('app-ios').value;
+  a.features = [];
+  let i = 0;
+  while (document.getElementById('apf-icon-'+i)) {
+    a.features.push({ icon: document.getElementById('apf-icon-'+i).value, label: document.getElementById('apf-label-'+i).value });
+    i++;
+  }
+  saveData(); renderApp(); showSuccess('app-success');
+}
+
 // ===== INIT =====
 loadData();
 renderProfile();
 renderBooks();
 renderStains();
 renderCourses();
+renderApp();
 </script>
 </body>
 </html>
