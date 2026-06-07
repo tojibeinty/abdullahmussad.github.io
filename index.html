@@ -440,7 +440,6 @@ async function loadData() {
       const snap = await window._fsGetDoc(window._fsDoc(db, ...DOC_PATH.split("/")));
       if (snap.exists()) {
         const remote = snap.data();
-        // دمج ذكي: نحتفظ بالبيانات الافتراضية لأي حقل غير موجود عن بُعد
         DATA = { ...DATA, ...remote };
       }
       return;
@@ -759,7 +758,7 @@ async function deleteBook(id) {
   await saveData(); renderBooksAdmin(); renderBooks();
 }
 
-function addFeat(bookId) {
+async function addFeat(bookId) {
   const b = DATA.books.find(x => x.id === bookId);
   if (!b) return;
   b.features.push('');
@@ -767,7 +766,7 @@ function addFeat(bookId) {
   document.getElementById('book-body-'+bookId).classList.add('open');
 }
 
-function removeFeat(bookId, fi) {
+async function removeFeat(bookId, fi) {
   const b = DATA.books.find(x => x.id === bookId);
   if (!b) return;
   b.features.splice(fi, 1);
@@ -1032,14 +1031,23 @@ async function saveApp() {
 
 // ===== INIT =====
 (async () => {
-  // أظهر شاشة تحميل بسيطة
   document.body.insertAdjacentHTML('afterbegin',
     '<div id="loading-screen" style="position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:12px;">' +
     '<div style="width:36px;height:36px;border:3px solid #e5e5e5;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;"></div>' +
     '<div style="font-family:Tajawal,sans-serif;font-size:14px;color:#888;">جاري التحميل...</div>' +
     '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>');
 
-  await loadData();
+  try {
+    // timeout بعد 5 ثواني يكمل بدون Firebase
+    await Promise.race([
+      loadData(),
+      new Promise(res => setTimeout(res, 5000))
+    ]);
+  } catch(e) {
+    console.warn("Load failed, using defaults", e);
+    const saved = localStorage.getItem('abid_data');
+    if (saved) { try { DATA = JSON.parse(saved); } catch(e2) {} }
+  }
 
   document.getElementById('loading-screen').remove();
   renderProfile();
