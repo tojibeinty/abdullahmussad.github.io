@@ -403,12 +403,61 @@ let DATA = {
   }
 };
 
-// Load from localStorage if exists
-function loadData() {
+// ===== FIREBASE CONFIG =====
+// 🔧 ضع هنا بياناتك من Firebase Console
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyCOHTRwx3zGhSJ1GqjKSCUiqXA3coF1PV4",
+  authDomain:        "iq-lab-b2203.firebaseapp.com",
+  projectId:         "iq-lab-b2203",
+  storageBucket:     "iq-lab-b2203.firebasestorage.app",
+  messagingSenderId: "970197752307",
+  appId:             "1:970197752307:web:03c1af97b105a93209da86"
+};
+const DOC_PATH = "site/data"; // مسار الوثيقة في Firestore
+
+let db = null;
+let _firebaseReady = false;
+
+async function initFirebase() {
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(app);
+    window._fsDoc     = doc;
+    window._fsGetDoc  = getDoc;
+    window._fsSetDoc  = setDoc;
+    _firebaseReady = true;
+  } catch(e) {
+    console.warn("Firebase init failed, falling back to localStorage", e);
+  }
+}
+
+async function loadData() {
+  await initFirebase();
+  if (_firebaseReady) {
+    try {
+      const snap = await window._fsGetDoc(window._fsDoc(db, ...DOC_PATH.split("/")));
+      if (snap.exists()) {
+        const remote = snap.data();
+        // دمج ذكي: نحتفظ بالبيانات الافتراضية لأي حقل غير موجود عن بُعد
+        DATA = { ...DATA, ...remote };
+      }
+      return;
+    } catch(e) { console.warn("Firestore read failed", e); }
+  }
+  // fallback: localStorage
   const saved = localStorage.getItem('abid_data');
   if (saved) { try { DATA = JSON.parse(saved); } catch(e) {} }
 }
-function saveData() { localStorage.setItem('abid_data', JSON.stringify(DATA)); }
+
+async function saveData() {
+  localStorage.setItem('abid_data', JSON.stringify(DATA)); // احتياطي دائماً
+  if (!_firebaseReady) return;
+  try {
+    await window._fsSetDoc(window._fsDoc(db, ...DOC_PATH.split("/")), DATA);
+  } catch(e) { console.warn("Firestore write failed", e); }
+}
 
 // ===== HASH =====
 // Simple djb2 hash — works on file:// and https://
@@ -489,7 +538,7 @@ function populateProfileForm() {
     if (wrap && img) { img.src = p.avatar; wrap.style.display = 'block'; }
   }
 }
-function saveProfile() {
+async function saveProfile() {
   DATA.profile.name = document.getElementById('p-name').value;
   DATA.profile.title = document.getElementById('p-title').value;
   DATA.profile.bio = document.getElementById('p-bio').value;
@@ -497,7 +546,7 @@ function saveProfile() {
   DATA.profile.whatsapp = document.getElementById('p-whatsapp').value;
   DATA.profile.avatar = document.getElementById('p-avatar').value;
   DATA.profile.instagram = document.getElementById('p-instagram').value;
-  saveData(); renderProfile();
+  await saveData(); renderProfile();
   showSuccess('profile-success');
 }
 
@@ -674,14 +723,14 @@ function renderBooksAdmin() {
     </div>`).join('');
 }
 
-function addBook() {
+async function addBook() {
   const id = 'book_' + Date.now();
   DATA.books.push({ id, key: 'NEW', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'كتاب جديد', sub: '', coverGrad: 'linear-gradient(135deg,#1D9E75,#085041)', desc: '', features: [], isNew: true });
-  saveData(); renderBooksAdmin(); renderBooks();
+  await saveData(); renderBooksAdmin(); renderBooks();
   setTimeout(() => { document.getElementById('book-body-'+id) && document.getElementById('book-body-'+id).classList.add('open'); }, 100);
 }
 
-function saveBook(id) {
+async function saveBook(id) {
   const b = DATA.books.find(x => x.id === id);
   if (!b) return;
   b.key = document.getElementById('bk-'+id).value;
@@ -699,20 +748,20 @@ function saveBook(id) {
     b.features.push(document.getElementById('bf-'+id+'-'+fi).value);
     fi++;
   }
-  saveData(); renderBooks(); showSuccess('books-success');
+  await saveData(); renderBooks(); showSuccess('books-success');
 }
 
-function deleteBook(id) {
+async function deleteBook(id) {
   if (!confirm('هل تريد حذف هذا الكتاب؟')) return;
   DATA.books = DATA.books.filter(x => x.id !== id);
-  saveData(); renderBooksAdmin(); renderBooks();
+  await saveData(); renderBooksAdmin(); renderBooks();
 }
 
 function addFeat(bookId) {
   const b = DATA.books.find(x => x.id === bookId);
   if (!b) return;
   b.features.push('');
-  saveData(); renderBooksAdmin();
+  await saveData(); renderBooksAdmin();
   document.getElementById('book-body-'+bookId).classList.add('open');
 }
 
@@ -720,7 +769,7 @@ function removeFeat(bookId, fi) {
   const b = DATA.books.find(x => x.id === bookId);
   if (!b) return;
   b.features.splice(fi, 1);
-  saveData(); renderBooksAdmin();
+  await saveData(); renderBooksAdmin();
   document.getElementById('book-body-'+bookId).classList.add('open');
 }
 
@@ -747,14 +796,14 @@ function renderStainsAdmin() {
     </div>`).join('');
 }
 
-function addStain() {
+async function addStain() {
   const id = 'stain_' + Date.now();
   DATA.stains.push({ id, name: 'صبغة جديدة', type: '', img: '', emoji: '🧪', emojiBg: '#f5f5f5', desc: '' });
-  saveData(); renderStainsAdmin(); renderStains();
+  await saveData(); renderStainsAdmin(); renderStains();
   setTimeout(() => { document.getElementById('stain-body-'+id) && document.getElementById('stain-body-'+id).classList.add('open'); }, 100);
 }
 
-function saveStain(id) {
+async function saveStain(id) {
   const s = DATA.stains.find(x => x.id === id);
   if (!s) return;
   s.name = document.getElementById('sn-'+id).value;
@@ -763,13 +812,13 @@ function saveStain(id) {
   s.emoji = document.getElementById('se-'+id).value;
   s.emojiBg = document.getElementById('seb-'+id).value;
   s.desc = document.getElementById('sd-'+id).value;
-  saveData(); renderStains(); showSuccess('stains-success');
+  await saveData(); renderStains(); showSuccess('stains-success');
 }
 
-function deleteStain(id) {
+async function deleteStain(id) {
   if (!confirm('هل تريد حذف هذه الصبغة؟')) return;
   DATA.stains = DATA.stains.filter(x => x.id !== id);
-  saveData(); renderStainsAdmin(); renderStains();
+  await saveData(); renderStainsAdmin(); renderStains();
 }
 
 // ===== ADMIN: COURSES =====
@@ -812,14 +861,14 @@ function renderCoursesAdmin() {
     </div>`).join('');
 }
 
-function addCourse() {
+async function addCourse() {
   const id = 'course_' + Date.now();
   DATA.courses.push({ id, title: 'دورة جديدة', sub: 'مختبر', icon: '🔬', iconBg: '#E1F5EE', desc: '', features: [], price: '', isNew: true });
-  saveData(); renderCoursesAdmin(); renderCourses();
+  await saveData(); renderCoursesAdmin(); renderCourses();
   setTimeout(() => { document.getElementById('course-body-'+id) && document.getElementById('course-body-'+id).classList.add('open'); }, 100);
 }
 
-function saveCourse(id) {
+async function saveCourse(id) {
   const c = DATA.courses.find(x => x.id === id);
   if (!c) return;
   c.title = document.getElementById('ct-'+id).value;
@@ -836,28 +885,28 @@ function saveCourse(id) {
     c.features.push(document.getElementById('cf-'+id+'-'+fi).value);
     fi++;
   }
-  saveData(); renderCourses(); showSuccess('courses-success');
+  await saveData(); renderCourses(); showSuccess('courses-success');
 }
 
-function deleteCourse(id) {
+async function deleteCourse(id) {
   if (!confirm('هل تريد حذف هذه الدورة؟')) return;
   DATA.courses = DATA.courses.filter(x => x.id !== id);
-  saveData(); renderCoursesAdmin(); renderCourses();
+  await saveData(); renderCoursesAdmin(); renderCourses();
 }
 
-function addCourseFeat(courseId) {
+async function addCourseFeat(courseId) {
   const c = DATA.courses.find(x => x.id === courseId);
   if (!c) return;
   c.features.push('');
-  saveData(); renderCoursesAdmin();
+  await saveData(); renderCoursesAdmin();
   document.getElementById('course-body-'+courseId).classList.add('open');
 }
 
-function removeCourseFeat(courseId, fi) {
+async function removeCourseFeat(courseId, fi) {
   const c = DATA.courses.find(x => x.id === courseId);
   if (!c) return;
   c.features.splice(fi, 1);
-  saveData(); renderCoursesAdmin();
+  await saveData(); renderCoursesAdmin();
   document.getElementById('course-body-'+courseId).classList.add('open');
 }
 
@@ -953,17 +1002,17 @@ function renderAppFeatsAdmin() {
     </div>`).join('');
 }
 
-function addAppFeat() {
+async function addAppFeat() {
   DATA.app.features.push({ icon: '⭐', label: '' });
-  saveData(); renderAppFeatsAdmin();
+  await saveData(); renderAppFeatsAdmin();
 }
 
-function removeAppFeat(i) {
+async function removeAppFeat(i) {
   DATA.app.features.splice(i, 1);
-  saveData(); renderAppFeatsAdmin();
+  await saveData(); renderAppFeatsAdmin();
 }
 
-function saveApp() {
+async function saveApp() {
   const a = DATA.app;
   a.visible = document.getElementById('app-visible').value === 'true';
   a.title = document.getElementById('app-title').value;
@@ -976,16 +1025,27 @@ function saveApp() {
     a.features.push({ icon: document.getElementById('apf-icon-'+i).value, label: document.getElementById('apf-label-'+i).value });
     i++;
   }
-  saveData(); renderApp(); showSuccess('app-success');
+  await saveData(); renderApp(); showSuccess('app-success');
 }
 
 // ===== INIT =====
-loadData();
-renderProfile();
-renderBooks();
-renderStains();
-renderCourses();
-renderApp();
+(async () => {
+  // أظهر شاشة تحميل بسيطة
+  document.body.insertAdjacentHTML('afterbegin',
+    '<div id="loading-screen" style="position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:12px;">' +
+    '<div style="width:36px;height:36px;border:3px solid #e5e5e5;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;"></div>' +
+    '<div style="font-family:Tajawal,sans-serif;font-size:14px;color:#888;">جاري التحميل...</div>' +
+    '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>');
+
+  await loadData();
+
+  document.getElementById('loading-screen').remove();
+  renderProfile();
+  renderBooks();
+  renderStains();
+  renderCourses();
+  renderApp();
+})();
 </script>
 </body>
 </html>
