@@ -48,6 +48,15 @@
     .stain-name { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 1px; }
     .stain-type { font-size: 11px; color: #888; }
 
+    /* ===== COURSES ===== */
+    .courses-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
+    .course-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; text-align: center; position: relative; overflow: hidden; }
+    .course-card:hover { border-color: #1D9E75; transform: translateY(-2px); }
+    .course-icon { width: 56px; height: 56px; border-radius: 12px; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .course-badge { display: inline-block; background: #FFF3E0; color: #B45309; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 0.5rem; }
+    .course-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 4px; }
+    .course-sub { font-size: 11px; color: #888; }
+
     /* ===== MODAL ===== */
     .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: flex-end; justify-content: center; }
     .modal-backdrop.open { display: flex; }
@@ -56,6 +65,7 @@
     .modal-handle { width: 40px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 1.25rem; }
     .modal-badge-teal { display: inline-block; background: #E1F5EE; color: #085041; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
     .modal-badge-blue { display: inline-block; background: #E6F1FB; color: #0C447C; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
+    .modal-badge-orange { display: inline-block; background: #FFF3E0; color: #B45309; font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 1rem; }
     .modal-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 0.5rem; }
     .modal-desc { font-size: 14px; color: #666; line-height: 1.8; margin-bottom: 1.25rem; }
     .modal-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 1.25rem; display: block; }
@@ -66,18 +76,77 @@
     .order-form h3 { font-size: 15px; font-weight: 700; color: #111; margin-bottom: 1rem; }
     .form-group { margin-bottom: 10px; }
     .form-group label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
-    .form-group input { width: 100%; padding: 9px 12px; font-size: 13px; font-family: 'Tajawal', sans-serif; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #111; outline: none; direction: rtl; }
-    .form-group input:focus { border-color: #1D9E75; }
+    .form-group input, .form-group textarea { width: 100%; padding: 9px 12px; font-size: 13px; font-family: 'Tajawal', sans-serif; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #111; outline: none; direction: rtl; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #1D9E75; }
     .btn-order { width: 100%; padding: 12px; background: #25D366; color: white; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-order:hover { background: #1ebe5d; }
     .btn-order svg { width: 18px; height: 18px; }
     .close-btn { float: left; background: #f0f0f0; border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 16px; color: #666; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem; }
     .close-btn:hover { color: #111; }
 
+    /* ===== ADMIN BUTTON ===== */
+    .admin-fab { position: fixed; bottom: 24px; left: 24px; width: 44px; height: 44px; background: #111; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 50; border: none; transition: transform 0.2s; }
+    .admin-fab:hover { transform: scale(1.08); }
+    .admin-fab svg { width: 20px; height: 20px; color: #fff; }
+
+    /* ===== ADMIN PANEL ===== */
+    .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; }
+    .admin-overlay.open { display: block; }
+    .admin-panel { position: fixed; inset: 0; z-index: 201; display: none; flex-direction: column; }
+    .admin-panel.open { display: flex; }
+    .admin-inner { background: #f5f5f5; width: 100%; height: 100%; overflow-y: auto; }
+    .admin-header { background: #111; color: #fff; padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .admin-header h1 { font-size: 16px; font-weight: 700; }
+    .admin-close { background: rgba(255,255,255,0.15); border: none; color: #fff; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-family: 'Tajawal', sans-serif; font-size: 13px; }
+    .admin-tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; background: #fff; overflow-x: auto; }
+    .admin-tab { padding: 12px 18px; font-size: 13px; font-weight: 500; color: #888; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; font-family: 'Tajawal', sans-serif; background: none; border-left: none; border-right: none; border-top: none; }
+    .admin-tab.active { color: #1D9E75; border-bottom-color: #1D9E75; }
+    .admin-body { padding: 1.5rem; max-width: 720px; margin: 0 auto; }
+    .admin-section { display: none; }
+    .admin-section.active { display: block; }
+    .admin-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+    .admin-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .admin-card-title { font-size: 15px; font-weight: 700; color: #111; }
+    .btn-edit { background: #E1F5EE; color: #085041; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+    .btn-delete { background: #FEE2E2; color: #B91C1C; border: none; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Tajawal', sans-serif; margin-right: 6px; }
+    .btn-save { background: #1D9E75; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+    .btn-save:hover { background: #158a62; }
+    .btn-add { background: #111; color: #fff; border: none; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; display: flex; align-items: center; gap: 6px; margin-bottom: 1.25rem; }
+    .btn-add:hover { background: #333; }
+    .admin-field { margin-bottom: 12px; }
+    .admin-field label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
+    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; padding: 9px 12px; font-size: 13px; font-family: 'Tajawal', sans-serif; border: 0.5px solid #ddd; border-radius: 8px; background: #fff; color: #111; outline: none; direction: rtl; }
+    .admin-field input:focus, .admin-field textarea:focus, .admin-field select:focus { border-color: #1D9E75; }
+    .admin-field textarea { min-height: 80px; resize: vertical; }
+    .features-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+    .feature-row { display: flex; gap: 6px; align-items: center; }
+    .feature-row input { flex: 1; }
+    .btn-remove-feat { background: #FEE2E2; color: #B91C1C; border: none; border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: 12px; }
+    .btn-add-feat { background: #f0f0f0; color: #555; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 12px; font-family: 'Tajawal', sans-serif; }
+    .collapse-body { display: none; }
+    .collapse-body.open { display: block; }
+    .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .admin-success { background: #E1F5EE; color: #085041; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 1rem; display: none; }
+    .admin-success.show { display: block; }
+
+    /* ===== LOGIN OVERLAY ===== */
+    .login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 300; display: none; align-items: center; justify-content: center; }
+    .login-overlay.open { display: flex; }
+    .login-box { background: #fff; border-radius: 20px; padding: 2rem; width: 320px; text-align: center; }
+    .login-box h2 { font-size: 18px; font-weight: 700; margin-bottom: 0.5rem; }
+    .login-box p { font-size: 13px; color: #888; margin-bottom: 1.5rem; }
+    .login-input { width: 100%; padding: 10px 14px; font-size: 14px; font-family: 'Tajawal', sans-serif; border: 0.5px solid #ddd; border-radius: 10px; outline: none; text-align: center; letter-spacing: 4px; margin-bottom: 12px; }
+    .login-input:focus { border-color: #1D9E75; }
+    .btn-login { width: 100%; padding: 12px; background: #111; color: #fff; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; }
+    .btn-login:hover { background: #333; }
+    .login-error { color: #B91C1C; font-size: 13px; margin-top: 8px; display: none; }
+    .login-error.show { display: block; }
+
     @media (max-width: 520px) {
       .hero { flex-direction: column; text-align: center; }
       .books-grid { grid-template-columns: 1fr; }
       .stains-grid { grid-template-columns: repeat(2, 1fr); }
+      .courses-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -91,119 +160,52 @@
          alt="عبد الله مساعد" />
     <div class="avatar-initials">ع م</div>
     <div style="flex:1;">
-      <div class="hero-name">عبد الله مساعد</div>
-      <div class="hero-title">مؤلف ومدرب معتمد ومخترع عراقي</div>
-      <div class="hero-bio">متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.</div>
+      <div class="hero-name" id="hero-name">عبد الله مساعد</div>
+      <div class="hero-title" id="hero-title">مؤلف ومدرب معتمد ومخترع عراقي</div>
+      <div class="hero-bio" id="hero-bio">متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.</div>
       <div class="contact-row">
-
-        <!-- الهاتف -->
-        <div class="contact-chip">
+        <div class="contact-chip" id="chip-phone">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.06 1.18 2 2 0 012.08 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
           </svg>
-          <span>YOUR_PHONE_HERE</span>
+          <span id="phone-display">YOUR_PHONE_HERE</span>
         </div>
-
-        <!-- واتساب -->
         <div class="contact-chip">
           <svg viewBox="0 0 24 24" fill="#25D366" width="13" height="13">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.856L.054 23.454a.75.75 0 00.918.918l5.598-1.478A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.667-.524-5.186-1.437l-.372-.22-3.863 1.02 1.02-3.863-.22-.372A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
           </svg>
           <span>واتساب</span>
         </div>
-
-        <!-- انستغرام -->
-        <a class="contact-chip" href="https://instagram.com/YOUR_INSTAGRAM_HERE" target="_blank" style="color:#C13584;">
+        <a class="contact-chip" id="chip-instagram" href="https://instagram.com/YOUR_INSTAGRAM_HERE" target="_blank" style="color:#C13584;">
           <svg viewBox="0 0 24 24" fill="none" stroke="#C13584" stroke-width="2">
             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
             <circle cx="12" cy="12" r="4"/>
             <circle cx="17.5" cy="6.5" r="1" fill="#C13584" stroke="none"/>
           </svg>
-          <span>YOUR_INSTAGRAM_HERE</span>
+          <span id="instagram-display">YOUR_INSTAGRAM_HERE</span>
         </a>
-
       </div>
     </div>
   </div>
 
   <!-- ===== BOOKS ===== -->
   <div class="section-label">الكتب المختبرية</div>
-  <div class="books-grid">
-
-    <div class="book-card" onclick="openBook('GUE')">
-      <div class="new-badge">جديد</div>
-      <div class="book-badge">كتاب طبي</div>
-      <div class="book-cover" style="background:linear-gradient(135deg,#1D9E75,#085041);">GUE</div>
-      <div class="book-title">GUE</div>
-      <div class="book-sub">فحص البول العام</div>
-    </div>
-
-    <div class="book-card" onclick="openBook('GSE')">
-      <div class="new-badge">جديد</div>
-      <div class="book-badge">كتاب طبي</div>
-      <div class="book-cover" style="background:linear-gradient(135deg,#185FA5,#042C53);">GSE</div>
-      <div class="book-title">GSE</div>
-      <div class="book-sub">فحص البراز العام</div>
-    </div>
-
-    <div class="book-card" onclick="openBook('CSF')">
-      <div class="new-badge">جديد</div>
-      <div class="book-badge">كتاب طبي</div>
-      <div class="book-cover" style="background:linear-gradient(135deg,#D85A30,#4A1B0C);">CSF</div>
-      <div class="book-title">CSF</div>
-      <div class="book-sub">السائل الدماغي الشوكي</div>
-    </div>
-
-  </div>
+  <div class="books-grid" id="books-grid"></div>
 
   <!-- ===== DIVIDER ===== -->
   <div class="divider"></div>
 
   <!-- ===== STAINS ===== -->
   <div class="section-label">الصبغات المختبرية</div>
-  <div class="stains-grid">
+  <div class="stains-grid" id="stains-grid"></div>
 
-    <div class="stain-card" onclick="openStain('methylene_blue')">
-      <img class="stain-img" src="METHYLENE_BLUE_IMG_URL"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Methylene Blue" />
-      <div class="stain-img-placeholder" style="background:#DBEAFE;">🔵</div>
-      <div class="stain-body">
-        <div class="stain-name">Methylene Blue</div>
-        <div class="stain-type">أزرق</div>
-      </div>
-    </div>
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider"></div>
 
-    <div class="stain-card" onclick="openStain('diff_quick')">
-      <img class="stain-img" src="DIFF_QUICK_IMG_URL"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Diff Quick" />
-      <div class="stain-img-placeholder" style="background:#EDE9FE;">🧪</div>
-      <div class="stain-body">
-        <div class="stain-name">Diff Quick</div>
-        <div class="stain-type">صبغة سريعة</div>
-      </div>
-    </div>
+  <!-- ===== COURSES ===== -->
+  <div class="section-label">الدورات المختبرية</div>
+  <div class="courses-grid" id="courses-grid"></div>
 
-    <div class="stain-card" onclick="openStain('toludin')">
-      <img class="stain-img" src="TOLUDIN_IMG_URL"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Toludin" />
-      <div class="stain-img-placeholder" style="background:#BFDBFE;">🫐</div>
-      <div class="stain-body">
-        <div class="stain-name">Toludin</div>
-        <div class="stain-type">صبغة مجهرية</div>
-      </div>
-    </div>
-
-    <div class="stain-card" onclick="openStain('galaxia')">
-      <img class="stain-img" src="GALAXIA_IMG_URL"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="Galaxia" />
-      <div class="stain-img-placeholder" style="background:#EDE9FE;">🌌</div>
-      <div class="stain-body">
-        <div class="stain-name">Galaxia</div>
-        <div class="stain-type">صبغة مركّبة</div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <!-- ===== MODAL ===== -->
@@ -215,85 +217,262 @@
   </div>
 </div>
 
+<!-- ===== ADMIN FAB ===== -->
+<button class="admin-fab" onclick="openAdminLogin()" title="لوحة الإدارة">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+  </svg>
+</button>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div style="font-size:36px;margin-bottom:1rem;">🔐</div>
+    <h2>لوحة الإدارة</h2>
+    <p>أدخل كلمة المرور للوصول</p>
+    <input class="login-input" type="password" id="login-password" placeholder="••••••" onkeydown="if(event.key==='Enter')checkLogin()" />
+    <button class="btn-login" onclick="checkLogin()">دخول</button>
+    <div class="login-error" id="login-error">❌ كلمة المرور غير صحيحة</div>
+    <button onclick="closeAdminLogin()" style="background:none;border:none;color:#888;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:13px;margin-top:12px;">إلغاء</button>
+  </div>
+</div>
+
+<!-- ===== ADMIN OVERLAY ===== -->
+<div class="admin-overlay" id="admin-overlay" onclick="closeAdmin()"></div>
+
+<!-- ===== ADMIN PANEL ===== -->
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-inner">
+    <div class="admin-header">
+      <h1>⚙️ لوحة الإدارة</h1>
+      <button class="admin-close" onclick="closeAdmin()">✕ إغلاق</button>
+    </div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('profile')">الملف الشخصي</button>
+      <button class="admin-tab" onclick="switchTab('books')">الكتب</button>
+      <button class="admin-tab" onclick="switchTab('stains')">الصبغات</button>
+      <button class="admin-tab" onclick="switchTab('courses')">الدورات</button>
+    </div>
+    <div class="admin-body">
+
+      <!-- ===== TAB: PROFILE ===== -->
+      <div class="admin-section active" id="tab-profile">
+        <div class="admin-success" id="profile-success">✅ تم الحفظ بنجاح</div>
+        <div class="admin-card">
+          <div class="admin-card-header"><div class="admin-card-title">البيانات الشخصية</div></div>
+          <div class="admin-field"><label>الاسم</label><input type="text" id="p-name" /></div>
+          <div class="admin-field"><label>اللقب / التخصص</label><input type="text" id="p-title" /></div>
+          <div class="admin-field"><label>النبذة التعريفية</label><textarea id="p-bio"></textarea></div>
+          <div class="admin-field"><label>رقم الهاتف</label><input type="text" id="p-phone" /></div>
+          <div class="admin-field"><label>رقم واتساب (مع رمز الدولة بدون +)</label><input type="text" id="p-whatsapp" placeholder="9647701234567" /></div>
+          <div class="admin-field"><label>رابط صورتك الشخصية</label><input type="text" id="p-avatar" placeholder="https://..." /></div>
+          <div class="admin-field"><label>انستغرام (اسم المستخدم)</label><input type="text" id="p-instagram" /></div>
+          <button class="btn-save" onclick="saveProfile()">💾 حفظ</button>
+        </div>
+      </div>
+
+      <!-- ===== TAB: BOOKS ===== -->
+      <div class="admin-section" id="tab-books">
+        <div class="admin-success" id="books-success">✅ تم الحفظ بنجاح</div>
+        <button class="btn-add" onclick="addBook()">+ إضافة كتاب جديد</button>
+        <div id="books-admin-list"></div>
+      </div>
+
+      <!-- ===== TAB: STAINS ===== -->
+      <div class="admin-section" id="tab-stains">
+        <div class="admin-success" id="stains-success">✅ تم الحفظ بنجاح</div>
+        <button class="btn-add" onclick="addStain()">+ إضافة صبغة جديدة</button>
+        <div id="stains-admin-list"></div>
+      </div>
+
+      <!-- ===== TAB: COURSES ===== -->
+      <div class="admin-section" id="tab-courses">
+        <div class="admin-success" id="courses-success">✅ تم الحفظ بنجاح</div>
+        <button class="btn-add" onclick="addCourse()">+ إضافة دورة جديدة</button>
+        <div id="courses-admin-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-const BOOKS = {
-  GUE: {
-    badgeClass: 'modal-badge-teal', badge: 'كتاب مختبري',
-    title: 'GUE — General Urine Examination',
-    desc: 'كتاب متخصص يغطي جميع جوانب فحص البول العام بأسلوب علمي حديث ومبسّط. يربط المفاهيم النظرية بالتطبيق العملي داخل المختبر.',
-    features: ['تفسير شامل لنتائج فحص البول', 'ربط النتائج بالحالات السريرية', 'صور توضيحية ومخططات علمية']
+// ============================================================
+// PASSWORD — مشفر بـ SHA-256
+// الباسورد الحالي: admin1234
+// لتغييره: استبدل الهاش أدناه بهاش SHA-256 الجديد
+// ============================================================
+const PASS_HASH = 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3';
+// ============================================================
+
+// ===== DATA =====
+let DATA = {
+  profile: {
+    name: 'عبد الله مساعد',
+    title: 'مؤلف ومدرب معتمد ومخترع عراقي',
+    bio: 'متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.',
+    phone: 'YOUR_PHONE_HERE',
+    whatsapp: '9647XXXXXXXXX',
+    avatar: 'YOUR_PHOTO_URL_HERE',
+    instagram: 'YOUR_INSTAGRAM_HERE'
   },
-  GSE: {
-    badgeClass: 'modal-badge-blue', badge: 'كتاب مختبري',
-    title: 'GSE — General Stool Examination',
-    desc: 'مرجع علمي شامل يتناول فحص البراز العام. يشرح الطرق الحديثة في التحليل وتمييز الطفيليات والبكتيريا وتفسير النتائج.',
-    features: ['تغطية كاملة لأنواع الطفيليات المعوية', 'أساليب التلوين والفحص المجهري', 'إرشادات لجمع العينات وتخزينها']
-  },
-  CSF: {
-    badgeClass: 'modal-badge-teal', badge: 'كتاب مختبري',
-    title: 'CSF — Cerebrospinal Fluid Analysis',
-    desc: 'كتاب متخصص في تحليل السائل الدماغي الشوكي. يشرح التحليل الفيزيائي والكيميائي والمجهري ودوره في تشخيص أمراض الجهاز العصبي.',
-    features: ['شرح الخصائص الفيزيائية للسائل', 'التحليل الكيميائي والخلوي المفصّل', 'التشخيص التفريقي لأمراض السحايا']
-  }
+  books: [
+    { id: 'GUE', key: 'GUE', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'GUE — General Urine Examination', sub: 'فحص البول العام', coverGrad: 'linear-gradient(135deg,#1D9E75,#085041)', desc: 'كتاب متخصص يغطي جميع جوانب فحص البول العام بأسلوب علمي حديث ومبسّط. يربط المفاهيم النظرية بالتطبيق العملي داخل المختبر.', features: ['تفسير شامل لنتائج فحص البول','ربط النتائج بالحالات السريرية','صور توضيحية ومخططات علمية'], isNew: true },
+    { id: 'GSE', key: 'GSE', badge: 'كتاب مختبري', badgeClass: 'modal-badge-blue', title: 'GSE — General Stool Examination', sub: 'فحص البراز العام', coverGrad: 'linear-gradient(135deg,#185FA5,#042C53)', desc: 'مرجع علمي شامل يتناول فحص البراز العام. يشرح الطرق الحديثة في التحليل وتمييز الطفيليات والبكتيريا وتفسير النتائج.', features: ['تغطية كاملة لأنواع الطفيليات المعوية','أساليب التلوين والفحص المجهري','إرشادات لجمع العينات وتخزينها'], isNew: true },
+    { id: 'CSF', key: 'CSF', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'CSF — Cerebrospinal Fluid Analysis', sub: 'السائل الدماغي الشوكي', coverGrad: 'linear-gradient(135deg,#D85A30,#4A1B0C)', desc: 'كتاب متخصص في تحليل السائل الدماغي الشوكي. يشرح التحليل الفيزيائي والكيميائي والمجهري ودوره في تشخيص أمراض الجهاز العصبي.', features: ['شرح الخصائص الفيزيائية للسائل','التحليل الكيميائي والخلوي المفصّل','التشخيص التفريقي لأمراض السحايا'], isNew: true }
+  ],
+  stains: [
+    { id: 'methylene_blue', name: 'Methylene Blue', type: 'أزرق', img: 'METHYLENE_BLUE_IMG_URL', emoji: '🔵', emojiBg: '#DBEAFE', desc: 'صبغة الميثيلين الزرقاء من أقدم وأكثر الصبغات المختبرية استخداماً. تُستخدم لتلوين المسحات والعينات المختبرية وإبراز التفاصيل الدقيقة في الفحص المجهري بدقة عالية.' },
+    { id: 'diff_quick', name: 'Diff Quick', type: 'صبغة سريعة', img: 'DIFF_QUICK_IMG_URL', emoji: '🧪', emojiBg: '#EDE9FE', desc: 'صبغة Diff Quick سريعة الاستخدام، مصممة للحصول على نتائج احترافية في وقت قياسي. تُستخدم على نطاق واسع في تلوين المسحات الدموية والمسحات المختبرية العامة.' },
+    { id: 'toludin', name: 'Toludin', type: 'صبغة مجهرية', img: 'TOLUDIN_IMG_URL', emoji: '🫐', emojiBg: '#BFDBFE', desc: 'صبغة التولويدين متعددة الاستخدامات، تُعطي تلويناً واضحاً ومميزاً لمكونات العينة المختلفة. مناسبة لأنواع متعددة من الفحوصات المجهرية في المختبرات الطبية.' },
+    { id: 'galaxia', name: 'Galaxia', type: 'صبغة مركّبة', img: 'GALAXIA_IMG_URL', emoji: '🌌', emojiBg: '#EDE9FE', desc: 'صبغة Galaxia تركيبة متطورة تجمع خصائص عدة صبغات في منتج واحد. توفر تلويناً عميقاً ومتوازناً يُسهّل تمييز التفاصيل الدقيقة وتُعطي صورة مجهرية احترافية.' }
+  ],
+  courses: [
+    { id: 'c1', title: 'دورة فحص البول المتقدم', sub: 'تشخيص ومختبر', icon: '🔬', iconBg: '#E1F5EE', desc: 'دورة شاملة تغطي جميع جوانب فحص البول من الناحية العملية والنظرية. مناسبة لأخصائيي المختبرات والطلاب.', features: ['الفحص الفيزيائي والكيميائي','تفسير النتائج المجهرية','حالات عملية وتشخيصية'], price: '', isNew: true },
+    { id: 'c2', title: 'دورة الطفيليات المعوية', sub: 'علم الطفيليات', icon: '🧫', iconBg: '#FFF3E0', desc: 'دورة متخصصة في تشخيص وتمييز الطفيليات المعوية بالفحص المجهري. مع تطبيقات عملية على عينات حقيقية.', features: ['تمييز أنواع الطفيليات','أساليب تحضير العينات','تفسير نتائج الفحص'], price: '', isNew: false }
+  ]
 };
 
-const STAINS = {
-  methylene_blue: {
-    name: 'Methylene Blue', img: 'METHYLENE_BLUE_IMG_URL',
-    desc: 'صبغة الميثيلين الزرقاء من أقدم وأكثر الصبغات المختبرية استخداماً. تُستخدم لتلوين المسحات والعينات المختبرية وإبراز التفاصيل الدقيقة في الفحص المجهري بدقة عالية.'
-  },
-  diff_quick: {
-    name: 'Diff Quick', img: 'DIFF_QUICK_IMG_URL',
-    desc: 'صبغة Diff Quick سريعة الاستخدام، مصممة للحصول على نتائج احترافية في وقت قياسي. تُستخدم على نطاق واسع في تلوين المسحات الدموية والمسحات المختبرية العامة.'
-  },
-  toludin: {
-    name: 'Toludin', img: 'TOLUDIN_IMG_URL',
-    desc: 'صبغة التولويدين متعددة الاستخدامات، تُعطي تلويناً واضحاً ومميزاً لمكونات العينة المختلفة. مناسبة لأنواع متعددة من الفحوصات المجهرية في المختبرات الطبية.'
-  },
-  galaxia: {
-    name: 'Galaxia', img: 'GALAXIA_IMG_URL',
-    desc: 'صبغة Galaxia تركيبة متطورة تجمع خصائص عدة صبغات في منتج واحد. توفر تلويناً عميقاً ومتوازناً يُسهّل تمييز التفاصيل الدقيقة وتُعطي صورة مجهرية احترافية.'
-  }
-};
+// Load from localStorage if exists
+function loadData() {
+  const saved = localStorage.getItem('abid_data');
+  if (saved) { try { DATA = JSON.parse(saved); } catch(e) {} }
+}
+function saveData() { localStorage.setItem('abid_data', JSON.stringify(DATA)); }
 
-// ==============================
-// غيّر رقم واتساب هنا (مع رمز الدولة بدون + أو صفر):
-const WHATSAPP_NUMBER = '9647XXXXXXXXX';
-// مثال عراقي: 9647701234567
-// ==============================
-
-function buildOrderForm(itemName) {
-  const safe = itemName.replace(/'/g, "\\'");
-  return `
-    <div class="order-form">
-      <h3>اطلب الآن</h3>
-      <div class="form-group">
-        <label>اسمك الكريم</label>
-        <input type="text" id="f-name" placeholder="  احمد عدي..." />
-      </div>
-      <div class="form-group">
-        <label>عنوانك (المحافظة / المنطقة)</label>
-        <input type="text" id="f-addr" placeholder="بغداد - الكرخ..." />
-      </div>
-      <div class="form-group">
-        <label>رقم هاتفك</label>
-        <input type="tel" id="f-phone" placeholder="07xxxxxxxxx" />
-      </div>
-      <button class="btn-order" onclick="sendTelegram('${safe}')">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.856L.054 23.454a.75.75 0 00.918.918l5.598-1.478A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.667-.524-5.186-1.437l-.372-.22-3.863 1.02 1.02-3.863-.22-.372A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-        </svg>
-        إرسال الطلب عبر واتساب
-      </button>
-    </div>`;
+// ===== HASH =====
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
-function openBook(key) {
-  const b = BOOKS[key];
-  const feats = b.features.map(f =>
-    `<div class="feature-item"><div class="feature-dot"></div><span>${f}</span></div>`
-  ).join('');
+// ===== LOGIN =====
+function openAdminLogin() {
+  document.getElementById('login-overlay').classList.add('open');
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').classList.remove('show');
+  setTimeout(() => document.getElementById('login-password').focus(), 100);
+}
+function closeAdminLogin() { document.getElementById('login-overlay').classList.remove('open'); }
+async function checkLogin() {
+  const pw = document.getElementById('login-password').value;
+  const h = await sha256(pw);
+  if (h === PASS_HASH) {
+    closeAdminLogin();
+    openAdmin();
+  } else {
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-password').value = '';
+  }
+}
+
+// ===== ADMIN =====
+function openAdmin() {
+  populateProfileForm();
+  renderBooksAdmin();
+  renderStainsAdmin();
+  renderCoursesAdmin();
+  document.getElementById('admin-overlay').classList.add('open');
+  document.getElementById('admin-panel').classList.add('open');
+}
+function closeAdmin() {
+  document.getElementById('admin-overlay').classList.remove('open');
+  document.getElementById('admin-panel').classList.remove('open');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+function showSuccess(id) {
+  const el = document.getElementById(id);
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ===== PROFILE =====
+function populateProfileForm() {
+  const p = DATA.profile;
+  document.getElementById('p-name').value = p.name;
+  document.getElementById('p-title').value = p.title;
+  document.getElementById('p-bio').value = p.bio;
+  document.getElementById('p-phone').value = p.phone;
+  document.getElementById('p-whatsapp').value = p.whatsapp;
+  document.getElementById('p-avatar').value = p.avatar;
+  document.getElementById('p-instagram').value = p.instagram;
+}
+function saveProfile() {
+  DATA.profile.name = document.getElementById('p-name').value;
+  DATA.profile.title = document.getElementById('p-title').value;
+  DATA.profile.bio = document.getElementById('p-bio').value;
+  DATA.profile.phone = document.getElementById('p-phone').value;
+  DATA.profile.whatsapp = document.getElementById('p-whatsapp').value;
+  DATA.profile.avatar = document.getElementById('p-avatar').value;
+  DATA.profile.instagram = document.getElementById('p-instagram').value;
+  saveData(); renderProfile();
+  showSuccess('profile-success');
+}
+
+// ===== RENDER MAIN PAGE =====
+function renderProfile() {
+  const p = DATA.profile;
+  document.getElementById('hero-name').textContent = p.name;
+  document.getElementById('hero-title').textContent = p.title;
+  document.getElementById('hero-bio').textContent = p.bio;
+  document.getElementById('phone-display').textContent = p.phone;
+  document.getElementById('instagram-display').textContent = p.instagram;
+  document.getElementById('chip-instagram').href = 'https://instagram.com/' + p.instagram;
+  const av = document.querySelector('.avatar');
+  av.src = p.avatar;
+}
+
+function renderBooks() {
+  const grid = document.getElementById('books-grid');
+  grid.innerHTML = DATA.books.map(b => `
+    <div class="book-card" onclick="openBook('${b.id}')">
+      ${b.isNew ? '<div class="new-badge">جديد</div>' : ''}
+      <div class="book-badge">${b.badge}</div>
+      <div class="book-cover" style="background:${b.coverGrad};">${b.key || b.title.substring(0,3)}</div>
+      <div class="book-title">${b.title.split('—')[0].trim()}</div>
+      <div class="book-sub">${b.sub}</div>
+    </div>`).join('');
+}
+
+function renderStains() {
+  const grid = document.getElementById('stains-grid');
+  grid.innerHTML = DATA.stains.map(s => `
+    <div class="stain-card" onclick="openStain('${s.id}')">
+      <img class="stain-img" src="${s.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="${s.name}" />
+      <div class="stain-img-placeholder" style="background:${s.emojiBg};">${s.emoji}</div>
+      <div class="stain-body">
+        <div class="stain-name">${s.name}</div>
+        <div class="stain-type">${s.type}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCourses() {
+  const grid = document.getElementById('courses-grid');
+  if (!DATA.courses || DATA.courses.length === 0) {
+    grid.innerHTML = '<div style="color:#aaa;font-size:13px;grid-column:1/-1;text-align:center;padding:2rem;">لا توجد دورات بعد</div>';
+    return;
+  }
+  grid.innerHTML = DATA.courses.map(c => `
+    <div class="course-card" onclick="openCourse('${c.id}')">
+      ${c.isNew ? '<div class="new-badge">جديد</div>' : ''}
+      <div class="course-icon" style="background:${c.iconBg};">${c.icon}</div>
+      <div class="course-badge">دورة مختبرية</div>
+      <div class="course-title">${c.title}</div>
+      <div class="course-sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+// ===== MODAL OPENERS =====
+function openBook(id) {
+  const b = DATA.books.find(x => x.id === id);
+  if (!b) return;
+  const feats = (b.features||[]).map(f => `<div class="feature-item"><div class="feature-dot"></div><span>${f}</span></div>`).join('');
   document.getElementById('modal-content').innerHTML = `
     <div class="${b.badgeClass}">${b.badge}</div>
     <div class="modal-title">${b.title}</div>
@@ -303,28 +482,56 @@ function openBook(key) {
   document.getElementById('modal-backdrop').classList.add('open');
 }
 
-function openStain(key) {
-  const s = STAINS[key];
+function openStain(id) {
+  const s = DATA.stains.find(x => x.id === id);
+  if (!s) return;
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-badge-blue">صبغة مختبرية</div>
     <div class="modal-title">${s.name}</div>
-    <img class="modal-img" src="${s.img}"
-         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-         alt="${s.name}" />
-    <div class="modal-img-placeholder">🧪</div>
+    <img class="modal-img" src="${s.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="${s.name}" />
+    <div class="modal-img-placeholder" style="background:${s.emojiBg};">${s.emoji}</div>
     <div class="modal-desc">${s.desc}</div>
     ${buildOrderForm(s.name)}`;
   document.getElementById('modal-backdrop').classList.add('open');
 }
 
-function sendTelegram(itemName) {
+function openCourse(id) {
+  const c = DATA.courses.find(x => x.id === id);
+  if (!c) return;
+  const feats = (c.features||[]).map(f => `<div class="feature-item"><div class="feature-dot"></div><span>${f}</span></div>`).join('');
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-badge-orange">دورة مختبرية</div>
+    <div class="modal-title">${c.title}</div>
+    <div class="modal-desc">${c.desc}</div>
+    <div style="margin-bottom:1.25rem;">${feats}</div>
+    ${c.price ? `<div style="font-size:16px;font-weight:700;color:#1D9E75;margin-bottom:1rem;">السعر: ${c.price}</div>` : ''}
+    ${buildOrderForm('التسجيل في: ' + c.title)}`;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+// ===== ORDER FORM =====
+function buildOrderForm(itemName) {
+  const safe = itemName.replace(/'/g, "\\'");
+  return `
+    <div class="order-form">
+      <h3>اطلب الآن</h3>
+      <div class="form-group"><label>اسمك الكريم</label><input type="text" id="f-name" placeholder="عبد الرحمن علي..." /></div>
+      <div class="form-group"><label>عنوانك (المحافظة / المنطقة)</label><input type="text" id="f-addr" placeholder="بغداد - الكرخ..." /></div>
+      <div class="form-group"><label>رقم هاتفك</label><input type="tel" id="f-phone" placeholder="07xxxxxxxxx" /></div>
+      <button class="btn-order" onclick="sendWhatsapp('${safe}')">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.856L.054 23.454a.75.75 0 00.918.918l5.598-1.478A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.667-.524-5.186-1.437l-.372-.22-3.863 1.02 1.02-3.863-.22-.372A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        إرسال الطلب عبر واتساب
+      </button>
+    </div>`;
+}
+
+function sendWhatsapp(itemName) {
   const name  = document.getElementById('f-name').value.trim();
   const addr  = document.getElementById('f-addr').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
   if (!name || !addr || !phone) { alert('يرجى تعبئة جميع الحقول'); return; }
   const text = `📦 طلب جديد\n\nالمنتج: ${itemName}\nالاسم: ${name}\nالعنوان: ${addr}\nالهاتف: ${phone}`;
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
+  window.open(`https://wa.me/${DATA.profile.whatsapp}?text=${encodeURIComponent(text)}`, '_blank');
   document.getElementById('modal-content').innerHTML = `
     <div style="text-align:center;padding:2.5rem 1rem;">
       <div style="width:64px;height:64px;background:#E1F5EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:32px;">✓</div>
@@ -335,6 +542,231 @@ function sendTelegram(itemName) {
 
 function closeModal() { document.getElementById('modal-backdrop').classList.remove('open'); }
 function closeIfBackdrop(e) { if (e.target.id === 'modal-backdrop') closeModal(); }
+
+// ===== ADMIN: BOOKS =====
+function renderBooksAdmin() {
+  document.getElementById('books-admin-list').innerHTML = DATA.books.map((b,i) => `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${b.title}</div>
+        <div>
+          <button class="btn-delete" onclick="deleteBook('${b.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('book-body-${b.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="book-body-${b.id}">
+        <div class="admin-field"><label>الرمز المختصر (KEY)</label><input type="text" id="bk-${b.id}" value="${b.key||''}" /></div>
+        <div class="admin-field"><label>العنوان الكامل</label><input type="text" id="bt-${b.id}" value="${b.title}" /></div>
+        <div class="admin-field"><label>العنوان الفرعي</label><input type="text" id="bs-${b.id}" value="${b.sub}" /></div>
+        <div class="admin-field"><label>الوصف</label><textarea id="bd-${b.id}">${b.desc}</textarea></div>
+        <div class="admin-field"><label>لون الغلاف (CSS gradient)</label><input type="text" id="bc-${b.id}" value="${b.coverGrad}" /></div>
+        <div class="admin-field"><label>نوع الشارة</label>
+          <select id="bb-${b.id}"><option value="modal-badge-teal" ${b.badgeClass==='modal-badge-teal'?'selected':''}>أخضر</option><option value="modal-badge-blue" ${b.badgeClass==='modal-badge-blue'?'selected':''}>أزرق</option></select>
+        </div>
+        <div class="admin-field"><label>نص الشارة</label><input type="text" id="bbn-${b.id}" value="${b.badge}" /></div>
+        <div class="admin-field">
+          <label>المميزات</label>
+          <div class="features-list" id="feats-${b.id}">${(b.features||[]).map((f,fi) => `<div class="feature-row"><input type="text" value="${f}" id="bf-${b.id}-${fi}" /><button class="btn-remove-feat" onclick="removeFeat('${b.id}',${fi})">✕</button></div>`).join('')}</div>
+          <button class="btn-add-feat" onclick="addFeat('${b.id}')">+ إضافة ميزة</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="checkbox" id="bn-${b.id}" ${b.isNew?'checked':''} />
+          <label for="bn-${b.id}" style="font-size:13px;color:#555;">عرض شارة "جديد"</label>
+        </div>
+        <button class="btn-save" style="margin-top:12px;" onclick="saveBook('${b.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+function addBook() {
+  const id = 'book_' + Date.now();
+  DATA.books.push({ id, key: 'NEW', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'كتاب جديد', sub: '', coverGrad: 'linear-gradient(135deg,#1D9E75,#085041)', desc: '', features: [], isNew: true });
+  saveData(); renderBooksAdmin(); renderBooks();
+  setTimeout(() => { document.getElementById('book-body-'+id) && document.getElementById('book-body-'+id).classList.add('open'); }, 100);
+}
+
+function saveBook(id) {
+  const b = DATA.books.find(x => x.id === id);
+  if (!b) return;
+  b.key = document.getElementById('bk-'+id).value;
+  b.title = document.getElementById('bt-'+id).value;
+  b.sub = document.getElementById('bs-'+id).value;
+  b.desc = document.getElementById('bd-'+id).value;
+  b.coverGrad = document.getElementById('bc-'+id).value;
+  b.badgeClass = document.getElementById('bb-'+id).value;
+  b.badge = document.getElementById('bbn-'+id).value;
+  b.isNew = document.getElementById('bn-'+id).checked;
+  b.features = [];
+  let fi = 0;
+  while (document.getElementById('bf-'+id+'-'+fi)) {
+    b.features.push(document.getElementById('bf-'+id+'-'+fi).value);
+    fi++;
+  }
+  saveData(); renderBooks(); showSuccess('books-success');
+}
+
+function deleteBook(id) {
+  if (!confirm('هل تريد حذف هذا الكتاب؟')) return;
+  DATA.books = DATA.books.filter(x => x.id !== id);
+  saveData(); renderBooksAdmin(); renderBooks();
+}
+
+function addFeat(bookId) {
+  const b = DATA.books.find(x => x.id === bookId);
+  if (!b) return;
+  b.features.push('');
+  saveData(); renderBooksAdmin();
+  document.getElementById('book-body-'+bookId).classList.add('open');
+}
+
+function removeFeat(bookId, fi) {
+  const b = DATA.books.find(x => x.id === bookId);
+  if (!b) return;
+  b.features.splice(fi, 1);
+  saveData(); renderBooksAdmin();
+  document.getElementById('book-body-'+bookId).classList.add('open');
+}
+
+// ===== ADMIN: STAINS =====
+function renderStainsAdmin() {
+  document.getElementById('stains-admin-list').innerHTML = DATA.stains.map((s,i) => `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${s.name}</div>
+        <div>
+          <button class="btn-delete" onclick="deleteStain('${s.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('stain-body-${s.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="stain-body-${s.id}">
+        <div class="admin-field"><label>الاسم</label><input type="text" id="sn-${s.id}" value="${s.name}" /></div>
+        <div class="admin-field"><label>النوع</label><input type="text" id="st-${s.id}" value="${s.type}" /></div>
+        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="si-${s.id}" value="${s.img}" placeholder="https://..." /></div>
+        <div class="admin-field"><label>إيموجي (بديل الصورة)</label><input type="text" id="se-${s.id}" value="${s.emoji}" /></div>
+        <div class="admin-field"><label>لون خلفية الإيموجي</label><input type="text" id="seb-${s.id}" value="${s.emojiBg}" /></div>
+        <div class="admin-field"><label>الوصف</label><textarea id="sd-${s.id}">${s.desc}</textarea></div>
+        <button class="btn-save" style="margin-top:8px;" onclick="saveStain('${s.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+function addStain() {
+  const id = 'stain_' + Date.now();
+  DATA.stains.push({ id, name: 'صبغة جديدة', type: '', img: '', emoji: '🧪', emojiBg: '#f5f5f5', desc: '' });
+  saveData(); renderStainsAdmin(); renderStains();
+  setTimeout(() => { document.getElementById('stain-body-'+id) && document.getElementById('stain-body-'+id).classList.add('open'); }, 100);
+}
+
+function saveStain(id) {
+  const s = DATA.stains.find(x => x.id === id);
+  if (!s) return;
+  s.name = document.getElementById('sn-'+id).value;
+  s.type = document.getElementById('st-'+id).value;
+  s.img = document.getElementById('si-'+id).value;
+  s.emoji = document.getElementById('se-'+id).value;
+  s.emojiBg = document.getElementById('seb-'+id).value;
+  s.desc = document.getElementById('sd-'+id).value;
+  saveData(); renderStains(); showSuccess('stains-success');
+}
+
+function deleteStain(id) {
+  if (!confirm('هل تريد حذف هذه الصبغة؟')) return;
+  DATA.stains = DATA.stains.filter(x => x.id !== id);
+  saveData(); renderStainsAdmin(); renderStains();
+}
+
+// ===== ADMIN: COURSES =====
+function renderCoursesAdmin() {
+  if (!DATA.courses) DATA.courses = [];
+  document.getElementById('courses-admin-list').innerHTML = DATA.courses.map((c,i) => `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${c.title}</div>
+        <div>
+          <button class="btn-delete" onclick="deleteCourse('${c.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('course-body-${c.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="course-body-${c.id}">
+        <div class="admin-field"><label>عنوان الدورة</label><input type="text" id="ct-${c.id}" value="${c.title}" /></div>
+        <div class="admin-field"><label>التخصص / الفئة</label><input type="text" id="cs-${c.id}" value="${c.sub}" /></div>
+        <div class="admin-field"><label>إيموجي الأيقونة</label><input type="text" id="ci-${c.id}" value="${c.icon}" /></div>
+        <div class="admin-field"><label>لون خلفية الأيقونة</label><input type="text" id="cib-${c.id}" value="${c.iconBg}" /></div>
+        <div class="admin-field"><label>الوصف</label><textarea id="cd-${c.id}">${c.desc}</textarea></div>
+        <div class="admin-field"><label>السعر (اختياري)</label><input type="text" id="cp-${c.id}" value="${c.price||''}" placeholder="مثال: 50,000 دينار" /></div>
+        <div class="admin-field">
+          <label>المميزات</label>
+          <div class="features-list" id="cfeats-${c.id}">${(c.features||[]).map((f,fi) => `<div class="feature-row"><input type="text" value="${f}" id="cf-${c.id}-${fi}" /><button class="btn-remove-feat" onclick="removeCourseFeat('${c.id}',${fi})">✕</button></div>`).join('')}</div>
+          <button class="btn-add-feat" onclick="addCourseFeat('${c.id}')">+ إضافة ميزة</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="checkbox" id="cn-${c.id}" ${c.isNew?'checked':''} />
+          <label for="cn-${c.id}" style="font-size:13px;color:#555;">عرض شارة "جديد"</label>
+        </div>
+        <button class="btn-save" style="margin-top:12px;" onclick="saveCourse('${c.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+function addCourse() {
+  const id = 'course_' + Date.now();
+  DATA.courses.push({ id, title: 'دورة جديدة', sub: 'مختبر', icon: '🔬', iconBg: '#E1F5EE', desc: '', features: [], price: '', isNew: true });
+  saveData(); renderCoursesAdmin(); renderCourses();
+  setTimeout(() => { document.getElementById('course-body-'+id) && document.getElementById('course-body-'+id).classList.add('open'); }, 100);
+}
+
+function saveCourse(id) {
+  const c = DATA.courses.find(x => x.id === id);
+  if (!c) return;
+  c.title = document.getElementById('ct-'+id).value;
+  c.sub = document.getElementById('cs-'+id).value;
+  c.icon = document.getElementById('ci-'+id).value;
+  c.iconBg = document.getElementById('cib-'+id).value;
+  c.desc = document.getElementById('cd-'+id).value;
+  c.price = document.getElementById('cp-'+id).value;
+  c.isNew = document.getElementById('cn-'+id).checked;
+  c.features = [];
+  let fi = 0;
+  while (document.getElementById('cf-'+id+'-'+fi)) {
+    c.features.push(document.getElementById('cf-'+id+'-'+fi).value);
+    fi++;
+  }
+  saveData(); renderCourses(); showSuccess('courses-success');
+}
+
+function deleteCourse(id) {
+  if (!confirm('هل تريد حذف هذه الدورة؟')) return;
+  DATA.courses = DATA.courses.filter(x => x.id !== id);
+  saveData(); renderCoursesAdmin(); renderCourses();
+}
+
+function addCourseFeat(courseId) {
+  const c = DATA.courses.find(x => x.id === courseId);
+  if (!c) return;
+  c.features.push('');
+  saveData(); renderCoursesAdmin();
+  document.getElementById('course-body-'+courseId).classList.add('open');
+}
+
+function removeCourseFeat(courseId, fi) {
+  const c = DATA.courses.find(x => x.id === courseId);
+  if (!c) return;
+  c.features.splice(fi, 1);
+  saveData(); renderCoursesAdmin();
+  document.getElementById('course-body-'+courseId).classList.add('open');
+}
+
+function toggleCollapse(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+// ===== INIT =====
+loadData();
+renderProfile();
+renderBooks();
+renderStains();
+renderCourses();
 </script>
 </body>
 </html>
