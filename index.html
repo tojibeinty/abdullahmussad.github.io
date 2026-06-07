@@ -553,7 +553,9 @@ async function saveProfile() {
 // ===== RENDER MAIN PAGE =====
 function renderProfile() {
   const p = DATA.profile;
-  document.getElementById('hero-name').textContent = p.name;
+  const nameEl = document.getElementById('hero-name');
+  nameEl.textContent = p.name;
+  nameEl.onclick = handleNameTap;
   document.getElementById('hero-title').textContent = p.title;
   document.getElementById('hero-bio').textContent = p.bio;
   document.getElementById('phone-display').textContent = p.phone;
