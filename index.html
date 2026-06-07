@@ -560,8 +560,22 @@ function renderProfile() {
   document.getElementById('phone-display').textContent = p.phone;
   document.getElementById('instagram-display').textContent = p.instagram;
   document.getElementById('chip-instagram').href = 'https://instagram.com/' + p.instagram;
+
   const av = document.querySelector('.avatar');
-  av.src = p.avatar;
+  const initials = document.querySelector('.avatar-initials');
+  const hasAvatar = p.avatar && p.avatar !== 'YOUR_PHOTO_URL_HERE' && p.avatar.trim() !== '';
+  if (hasAvatar) {
+    av.style.display = '';
+    initials.style.display = 'none';
+    av.onerror = function() {
+      av.style.display = 'none';
+      initials.style.display = 'flex';
+    };
+    av.src = p.avatar;
+  } else {
+    av.style.display = 'none';
+    initials.style.display = 'flex';
+  }
 }
 
 function renderBooks() {
