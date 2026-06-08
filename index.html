@@ -784,7 +784,7 @@ function openBook(id) {
     ${b.img ? `<img class="modal-img" src="${b.img}" alt="${b.title}" onerror="this.style.display='none';" />` : ''}
     <div class="modal-desc">${b.desc}</div>
     <div style="margin-bottom:1.25rem;">${feats}</div>
-    <button class="btn-preview" onclick="openPreviewDirect('${b.id}', '${b.title.replace(/'/g,"\\'")}')">
+    <button class="btn-preview" onclick="openPreviewDirect('${b.id}')">
       📖 تصفح عينة الكتاب
     </button>
     ${buildOrderForm(b.title)}`;
@@ -919,7 +919,7 @@ async function saveBook(id) {
   b.badgeClass = document.getElementById('bb-'+id).value;
   b.badge = document.getElementById('bbn-'+id).value;
   b.isNew = document.getElementById('bn-'+id).checked;
-  b.previewPdf = document.getElementById('bpdf-'+id).value.trim();
+  b.previewPdf = (document.getElementById('bpdf-'+id).value || '').trim();
   b.features = [];
   let fi = 0;
   while (document.getElementById('bf-'+id+'-'+fi)) {
@@ -1210,10 +1210,11 @@ async function saveApp() {
 let _pageFlip = null;
 let _previewPages = [];
 
-function openPreviewDirect(bookId, bookTitle) {
+function openPreviewDirect(bookId) {
   const b = DATA.books.find(x => x.id === bookId);
-  const pdfUrl = b && b.previewPdf ? b.previewPdf : '';
-  openPreviewPdf(pdfUrl, bookTitle);
+  if (!b) return;
+  const pdfUrl = b.previewPdf || '';
+  openPreviewPdf(pdfUrl, b.title);
 }
 
 function openPreviewPdf(pdfUrl, bookTitle) {
