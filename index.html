@@ -1220,7 +1220,7 @@ async function openPreview(folderKey, bookTitle) {
   document.getElementById('preview-backdrop').classList.add('open');
 
   // Probe how many pages exist via lazy image loading
-  const basePath = `${folderKey}/`;
+  const basePath = `/abdullahmussad.github.io/${folderKey}/`;
   const pages = await probePages(basePath, 1, 20); // probe up to 20 pages
 
   document.getElementById('preview-loading').style.display = 'none';
