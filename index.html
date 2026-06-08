@@ -295,7 +295,7 @@
 
   <!-- ===== HERO ===== -->
   <div class="hero">
-    <img class="avatar" src="YOUR_PHOTO_URL_HERE"
+    <img class="avatar" src=""
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
          alt="عبدالله مساعد " />
     <div class="avatar-initials">أ ع</div>
@@ -593,7 +593,12 @@ async function loadData() {
       const snap = await window._fsGetDoc(window._fsDoc(db, ...DOC_PATH.split("/")));
       if (snap.exists()) {
         const remote = snap.data();
-        DATA = { ...DATA, ...remote };
+        // Merge safely: don't overwrite arrays with empty arrays
+        const merged = { ...DATA, ...remote };
+        if (!remote.books || remote.books.length === 0) merged.books = DATA.books;
+        if (!remote.courses || remote.courses.length === 0) merged.courses = DATA.courses;
+        if (!remote.stains || remote.stains.length === 0) merged.stains = DATA.stains;
+        DATA = merged;
       }
       return;
     } catch(e) { console.warn("Firestore read failed", e); }
@@ -1216,8 +1221,6 @@ function openPreviewDirect(bookId, bookTitle) {
   const pages = (b && b.previewPages && b.previewPages.length > 0) ? b.previewPages : [];
   openPreviewWithPages(pages, bookTitle);
 }
-
-async function openPreviewWithPages(pages, bookTitle) {
 
 async function openPreviewWithPages(pages, bookTitle) {
   _pageFlip = null;
