@@ -295,10 +295,10 @@
 
   <!-- ===== HERO ===== -->
   <div class="hero">
-    <img class="avatar" id="hero-avatar" src=""
+    <img class="avatar" src="YOUR_PHOTO_URL_HERE"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-         alt="عبدالله مساعد " style="display:none;" />
-    <div class="avatar-initials" style="display:flex;">أ ع</div>
+         alt="عبدالله مساعد " />
+    <div class="avatar-initials">أ ع</div>
     <div style="flex:1;">
       <div class="hero-name" id="hero-name" onclick="handleNameTap()" style="cursor:default;user-select:none;">عبدالله مساعد </div>
       <div class="hero-title" id="hero-title">مؤلف ومدرب معتمد ومخترع عراقي</div>
@@ -521,10 +521,10 @@ let DATA = {
     name: 'عبدالله مساعد',
     title: 'مؤلف ومدرب معتمد ومخترع عراقي',
     bio: 'متخصص في التشخيص المختبري. قدّم دورات تدريبية متقدمة في العلوم المختبرية، وساهم في تطوير مهارات الكوادر الطبية داخل وخارج العراق. صاحب أول ثلاثة كتب طبية حديثة على مستوى الوطن العربي.',
-    phone: '',
+    phone: 'YOUR_PHONE_HERE',
     whatsapp: '9647XXXXXXXXX',
-    avatar: '',
-    instagram: ''
+    avatar: 'YOUR_PHOTO_URL_HERE',
+    instagram: 'YOUR_INSTAGRAM_HERE'
   },
   books: [
     { id: 'GUE', key: 'GUE', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'GUE — General Urine Examination', sub: 'فحص البول العام', coverGrad: 'linear-gradient(135deg,#1D9E75,#085041)', desc: 'كتاب متخصص يغطي جميع جوانب فحص البول العام بأسلوب علمي حديث ومبسّط. يربط المفاهيم النظرية بالتطبيق العملي داخل المختبر.', features: ['تفسير شامل لنتائج فحص البول','ربط النتائج بالحالات السريرية','صور توضيحية ومخططات علمية'], isNew: true },
@@ -532,10 +532,10 @@ let DATA = {
     { id: 'CSF', key: 'CSF', badge: 'كتاب مختبري', badgeClass: 'modal-badge-teal', title: 'CSF — Cerebrospinal Fluid Analysis', sub: 'السائل الدماغي الشوكي', coverGrad: 'linear-gradient(135deg,#D85A30,#4A1B0C)', desc: 'كتاب متخصص في تحليل السائل الدماغي الشوكي. يشرح التحليل الفيزيائي والكيميائي والمجهري ودوره في تشخيص أمراض الجهاز العصبي.', features: ['شرح الخصائص الفيزيائية للسائل','التحليل الكيميائي والخلوي المفصّل','التشخيص التفريقي لأمراض السحايا'], isNew: true }
   ],
   stains: [
-    { id: 'methylene_blue', name: 'Methylene Blue', type: 'أزرق', img: '', emoji: '🔵', emojiBg: '#DBEAFE', desc: 'صبغة الميثيلين الزرقاء من أقدم وأكثر الصبغات المختبرية استخداماً. تُستخدم لتلوين المسحات والعينات المختبرية وإبراز التفاصيل الدقيقة في الفحص المجهري بدقة عالية.' },
-    { id: 'diff_quick', name: 'Diff Quick', type: 'صبغة سريعة', img: '', emoji: '🧪', emojiBg: '#EDE9FE', desc: 'صبغة Diff Quick سريعة الاستخدام، مصممة للحصول على نتائج احترافية في وقت قياسي. تُستخدم على نطاق واسع في تلوين المسحات الدموية والمسحات المختبرية العامة.' },
-    { id: 'toludin', name: 'Toludin', type: 'صبغة مجهرية', img: '', emoji: '🫐', emojiBg: '#BFDBFE', desc: 'صبغة التولويدين متعددة الاستخدامات، تُعطي تلويناً واضحاً ومميزاً لمكونات العينة المختلفة. مناسبة لأنواع متعددة من الفحوصات المجهرية في المختبرات الطبية.' },
-    { id: 'galaxia', name: 'Galaxia', type: 'صبغة مركّبة', img: '', emoji: '🌌', emojiBg: '#EDE9FE', desc: 'صبغة Galaxia تركيبة متطورة تجمع خصائص عدة صبغات في منتج واحد. توفر تلويناً عميقاً ومتوازناً يُسهّل تمييز التفاصيل الدقيقة وتُعطي صورة مجهرية احترافية.' }
+    { id: 'methylene_blue', name: 'Methylene Blue', type: 'أزرق', img: 'METHYLENE_BLUE_IMG_URL', emoji: '🔵', emojiBg: '#DBEAFE', desc: 'صبغة الميثيلين الزرقاء من أقدم وأكثر الصبغات المختبرية استخداماً. تُستخدم لتلوين المسحات والعينات المختبرية وإبراز التفاصيل الدقيقة في الفحص المجهري بدقة عالية.' },
+    { id: 'diff_quick', name: 'Diff Quick', type: 'صبغة سريعة', img: 'DIFF_QUICK_IMG_URL', emoji: '🧪', emojiBg: '#EDE9FE', desc: 'صبغة Diff Quick سريعة الاستخدام، مصممة للحصول على نتائج احترافية في وقت قياسي. تُستخدم على نطاق واسع في تلوين المسحات الدموية والمسحات المختبرية العامة.' },
+    { id: 'toludin', name: 'Toludin', type: 'صبغة مجهرية', img: 'TOLUDIN_IMG_URL', emoji: '🫐', emojiBg: '#BFDBFE', desc: 'صبغة التولويدين متعددة الاستخدامات، تُعطي تلويناً واضحاً ومميزاً لمكونات العينة المختلفة. مناسبة لأنواع متعددة من الفحوصات المجهرية في المختبرات الطبية.' },
+    { id: 'galaxia', name: 'Galaxia', type: 'صبغة مركّبة', img: 'GALAXIA_IMG_URL', emoji: '🌌', emojiBg: '#EDE9FE', desc: 'صبغة Galaxia تركيبة متطورة تجمع خصائص عدة صبغات في منتج واحد. توفر تلويناً عميقاً ومتوازناً يُسهّل تمييز التفاصيل الدقيقة وتُعطي صورة مجهرية احترافية.' }
   ],
   courses: [
     { id: 'c1', title: 'دورة فحص البول المتقدم', sub: 'تشخيص ومختبر', icon: '🔬', iconBg: '#E1F5EE', desc: 'دورة شاملة تغطي جميع جوانب فحص البول من الناحية العملية والنظرية. مناسبة لأخصائيي المختبرات والطلاب.', features: ['الفحص الفيزيائي والكيميائي','تفسير النتائج المجهرية','حالات عملية وتشخيصية'], price: '', isNew: true },
@@ -572,24 +572,18 @@ let db = null;
 let _firebaseReady = false;
 
 async function initFirebase() {
-  return new Promise(async (resolve) => {
-    try {
-      const [{ initializeApp }, { getFirestore, doc, getDoc, setDoc }] = await Promise.all([
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js").catch(() => ({})),
-        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").catch(() => ({}))
-      ]);
-      if (!initializeApp || !getFirestore) { resolve(); return; }
-      const app = initializeApp(FIREBASE_CONFIG);
-      db = getFirestore(app);
-      window._fsDoc     = doc;
-      window._fsGetDoc  = getDoc;
-      window._fsSetDoc  = setDoc;
-      _firebaseReady = true;
-    } catch(e) {
-      console.warn("Firebase init failed, falling back to localStorage", e);
-    }
-    resolve();
-  });
+  try {
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getFirestore, doc, getDoc, setDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getFirestore(app);
+    window._fsDoc     = doc;
+    window._fsGetDoc  = getDoc;
+    window._fsSetDoc  = setDoc;
+    _firebaseReady = true;
+  } catch(e) {
+    console.warn("Firebase init failed, falling back to localStorage", e);
+  }
 }
 
 async function loadData() {
@@ -720,18 +714,17 @@ function renderProfile() {
   document.getElementById('instagram-display').textContent = p.instagram;
   document.getElementById('chip-instagram').href = 'https://instagram.com/' + p.instagram;
 
-  const av = document.getElementById('hero-avatar') || document.querySelector('.avatar');
+  const av = document.querySelector('.avatar');
   const initials = document.querySelector('.avatar-initials');
-  const placeholders = ['YOUR_PHOTO_URL_HERE', '', null, undefined];
-  const hasAvatar = p.avatar && !placeholders.includes(p.avatar) && p.avatar.trim() !== '';
+  const hasAvatar = p.avatar && p.avatar !== 'YOUR_PHOTO_URL_HERE' && p.avatar.trim() !== '';
   if (hasAvatar) {
-    av.src = p.avatar;
     av.style.display = '';
     initials.style.display = 'none';
     av.onerror = function() {
       av.style.display = 'none';
       initials.style.display = 'flex';
     };
+    av.src = p.avatar;
   } else {
     av.style.display = 'none';
     initials.style.display = 'flex';
@@ -754,8 +747,8 @@ function renderStains() {
   const grid = document.getElementById('stains-grid');
   grid.innerHTML = DATA.stains.map(s => `
     <div class="stain-card" onclick="openStain('${s.id}')">
-      ${s.img ? `<img class="stain-img" src="${s.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="${s.name}" />` : ''}
-      <div class="stain-img-placeholder" style="background:${s.emojiBg};${s.img ? '' : 'display:flex;'}">${s.emoji}</div>
+      <img class="stain-img" src="${s.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="${s.name}" />
+      <div class="stain-img-placeholder" style="background:${s.emojiBg};">${s.emoji}</div>
       <div class="stain-body">
         <div class="stain-name">${s.name}</div>
         <div class="stain-type">${s.type}</div>
