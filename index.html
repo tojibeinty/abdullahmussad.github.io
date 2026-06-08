@@ -223,11 +223,11 @@
     }
     .preview-close:hover { background: rgba(255,255,255,0.2); color: #fff; }
 
-    /* Book stage */
+    /* Book/PDF stage */
     .preview-stage {
-      flex: 1; display: flex; align-items: center; justify-content: center;
-      padding: 16px; overflow: hidden; position: relative;
-      min-height: 0;
+      flex: 1; display: flex; align-items: stretch; justify-content: center;
+      padding: 12px; overflow: hidden; position: relative;
+      min-height: 65vh;
     }
 
     /* Loading spinner */
@@ -295,7 +295,7 @@
 
   <!-- ===== HERO ===== -->
   <div class="hero">
-    <img class="avatar" src=""
+    <img class="avatar" src="YOUR_PHOTO_URL_HERE"
          onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
          alt="عبدالله مساعد " />
     <div class="avatar-initials">أ ع</div>
@@ -593,12 +593,7 @@ async function loadData() {
       const snap = await window._fsGetDoc(window._fsDoc(db, ...DOC_PATH.split("/")));
       if (snap.exists()) {
         const remote = snap.data();
-        // Merge safely: don't overwrite arrays with empty arrays
-        const merged = { ...DATA, ...remote };
-        if (!remote.books || remote.books.length === 0) merged.books = DATA.books;
-        if (!remote.courses || remote.courses.length === 0) merged.courses = DATA.courses;
-        if (!remote.stains || remote.stains.length === 0) merged.stains = DATA.stains;
-        DATA = merged;
+        DATA = { ...DATA, ...remote };
       }
       return;
     } catch(e) { console.warn("Firestore read failed", e); }
@@ -892,9 +887,9 @@ function renderBooksAdmin() {
           <button class="btn-add-feat" onclick="addFeat('${b.id}')">+ إضافة ميزة</button>
         </div>
         <div class="admin-field">
-          <label>📖 صفحات المعاينة — رابط كل صفحة في سطر منفصل (Cloudinary أو أي رابط)</label>
-          <textarea id="bpages-${b.id}" style="min-height:100px;font-size:12px;direction:ltr;" placeholder="https://res.cloudinary.com/.../1.jpg&#10;https://res.cloudinary.com/.../2.jpg&#10;https://res.cloudinary.com/.../3.jpg">${(b.previewPages||[]).join('\n')}</textarea>
-          <div style="font-size:11px;color:#aaa;margin-top:4px;">كل رابط في سطر — الترتيب هو ترتيب الصفحات</div>
+          <label>📄 رابط PDF المعاينة (Google Drive أو Cloudinary أو أي رابط مباشر)</label>
+          <input type="text" id="bpdf-${b.id}" value="${b.previewPdf||''}" placeholder="https://drive.google.com/file/d/.../preview" style="direction:ltr;font-size:12px;" />
+          <div style="font-size:11px;color:#aaa;margin-top:4px;">💡 Google Drive: افتح الملف ← مشاركة ← انسخ رابط المعاينة /preview</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
           <input type="checkbox" id="bn-${b.id}" ${b.isNew?'checked':''} />
@@ -924,8 +919,7 @@ async function saveBook(id) {
   b.badgeClass = document.getElementById('bb-'+id).value;
   b.badge = document.getElementById('bbn-'+id).value;
   b.isNew = document.getElementById('bn-'+id).checked;
-  const pagesRaw = document.getElementById('bpages-'+id).value;
-  b.previewPages = pagesRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  b.previewPdf = document.getElementById('bpdf-'+id).value.trim();
   b.features = [];
   let fi = 0;
   while (document.getElementById('bf-'+id+'-'+fi)) {
@@ -1212,113 +1206,231 @@ async function saveApp() {
   await saveData(); renderApp(); showSuccess('app-success');
 }
 
-// ===== BOOK PREVIEW (Simple Reliable Viewer) =====
+// ===== BOOK PREVIEW (StPageFlip) =====
+let _pageFlip = null;
 let _previewPages = [];
-let _previewCur = 0;
 
 function openPreviewDirect(bookId, bookTitle) {
   const b = DATA.books.find(x => x.id === bookId);
-  const pages = (b && b.previewPages && b.previewPages.length > 0) ? b.previewPages : [];
-  openPreviewWithPages(pages, bookTitle);
+  const pdfUrl = b && b.previewPdf ? b.previewPdf : '';
+  openPreviewPdf(pdfUrl, bookTitle);
 }
 
-function openPreviewWithPages(pages, bookTitle) {
-  _previewPages = pages || [];
-  _previewCur = 0;
-
+function openPreviewPdf(pdfUrl, bookTitle) {
   document.getElementById('preview-book-title').textContent = bookTitle;
+  document.getElementById('book-container').innerHTML = '';
   document.getElementById('preview-loading').style.display = 'none';
+  document.getElementById('preview-empty').style.display = 'none';
+  document.getElementById('preview-footer').style.display = 'none';
   document.getElementById('preview-backdrop').classList.add('open');
 
-  if (!_previewPages.length) {
+  if (!pdfUrl) {
     document.getElementById('preview-empty').style.display = 'flex';
-    document.getElementById('book-container').innerHTML = '';
-    document.getElementById('preview-footer').style.display = 'none';
     return;
   }
 
-  document.getElementById('preview-empty').style.display = 'none';
-  document.getElementById('preview-footer').style.display = 'flex';
-  document.getElementById('total-pages').textContent = _previewPages.length;
-  renderPreviewPage();
+  // Embed PDF via iframe
+  const iframe = document.createElement('iframe');
+  iframe.src = pdfUrl;
+  iframe.style.cssText = 'width:100%;height:100%;min-height:65vh;border:none;border-radius:10px;background:#222;';
+  iframe.setAttribute('allowfullscreen', '');
+  document.getElementById('book-container').style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;';
+  document.getElementById('preview-stage').style.padding = '8px';
+  document.getElementById('book-container').appendChild(iframe);
 }
 
-function renderPreviewPage() {
+async function openPreviewWithPages(pages, bookTitle) {
+
+async function openPreviewWithPages(pages, bookTitle) {
+  _pageFlip = null;
+  _previewPages = [];
+
+  document.getElementById('preview-book-title').textContent = bookTitle;
+  document.getElementById('book-container').innerHTML = '';
+  document.getElementById('preview-loading').style.display = 'flex';
+  document.getElementById('preview-empty').style.display = 'none';
+  document.getElementById('preview-footer').style.display = 'none';
+  document.getElementById('preview-backdrop').classList.add('open');
+
+  document.getElementById('preview-loading').style.display = 'none';
+
+  if (!pages || pages.length === 0) {
+    document.getElementById('preview-empty').style.display = 'flex';
+    return;
+  }
+
+  _previewPages = pages;
+  document.getElementById('preview-footer').style.display = 'flex';
+  document.getElementById('total-pages').textContent = pages.length;
+  document.getElementById('cur-page').textContent = 1;
+
+  // Load StPageFlip if not already loaded
+  if (!window.St) {
+    await loadScript('https://cdnjs.cloudflare.com/ajax/libs/StPageFlip/2.0.7/StPageFlip.browser.js');
+  }
+
+  initFlipBook(pages);
+}
+
+// Probe pages: try loading images 1.jpg, 2.jpg, ... in sequence
+// Returns an array of valid image URLs
+async function probePages(basePath, start, max) {
+  const found = [];
+  let i = start;
+  let consecutive_fails = 0;
+
+  while (i <= max && consecutive_fails < 2) {
+    const url = `${basePath}${i}.jpg`;
+    const ok = await imageExists(url);
+    if (ok) {
+      found.push(url);
+      consecutive_fails = 0;
+    } else {
+      consecutive_fails++;
+    }
+    i++;
+  }
+  return found;
+}
+
+function imageExists(url) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = url;
+  });
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function initFlipBook(pages) {
+  const stage = document.getElementById('preview-stage');
   const container = document.getElementById('book-container');
-  const url = _previewPages[_previewCur];
+  container.innerHTML = '';
 
-  container.innerHTML = `
-    <div style="
-      display:flex; align-items:center; justify-content:center;
-      width:100%; height:100%; min-height:300px;
-    ">
-      <div id="preview-img-wrap" style="
-        position:relative;
-        max-width:min(420px, 90vw);
-        width:100%;
-        border-radius:12px;
-        overflow:hidden;
-        box-shadow:0 8px 40px rgba(0,0,0,0.7);
-        background:#111;
-      ">
-        <div id="preview-img-loading" style="
-          position:absolute;inset:0;display:flex;align-items:center;
-          justify-content:center;background:#111;border-radius:12px;z-index:2;
-        ">
-          <div style="width:32px;height:32px;border:3px solid #333;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;"></div>
-        </div>
-        <img
-          src="${url}"
-          alt="صفحة ${_previewCur + 1}"
-          draggable="false"
-          oncontextmenu="return false"
-          onload="document.getElementById('preview-img-loading').style.display='none';"
-          onerror="document.getElementById('preview-img-loading').innerHTML='<div style=color:#666;font-size:13px;font-family:Tajawal,sans-serif>تعذّر تحميل الصورة</div>';"
-          style="
-            display:block; width:100%; height:auto;
-            max-height:70vh; object-fit:contain;
-            pointer-events:none; user-select:none;
-            -webkit-user-drag:none; position:relative; z-index:1;
-          "
-        />
-      </div>
-    </div>`;
+  // Compute book dimensions to fit stage responsively
+  const stageW = stage.clientWidth  || window.innerWidth  - 32;
+  const stageH = stage.clientHeight || window.innerHeight * 0.65;
+  const isMobile = window.innerWidth <= 520;
 
-  document.getElementById('cur-page').textContent = _previewCur + 1;
-  document.getElementById('btn-prev').disabled = (_previewCur <= 0);
-  document.getElementById('btn-next').disabled = (_previewCur >= _previewPages.length - 1);
+  // Single page on mobile, double on desktop
+  let bookW, bookH;
+  if (isMobile) {
+    bookW = Math.min(stageW - 16, 340);
+    bookH = Math.round(bookW * 1.42);
+  } else {
+    bookH = Math.min(stageH - 16, 520);
+    bookW = Math.round(bookH / 1.42) * 2;
+    if (bookW > stageW - 16) {
+      bookW = stageW - 16;
+      bookH = Math.round((bookW / 2) * 1.42);
+    }
+  }
+
+  // Build page elements for StPageFlip
+  const pageEls = pages.map(url => {
+    const div = document.createElement('div');
+    div.className = 'page-content';
+    div.style.cssText = 'background:#222;overflow:hidden;';
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;-webkit-user-drag:none;display:block;';
+    img.draggable = false;
+    img.addEventListener('contextmenu', e => e.preventDefault());
+
+    div.appendChild(img);
+    return div;
+  });
+
+  // Add all pages to container temporarily (StPageFlip needs them in DOM)
+  pageEls.forEach(el => container.appendChild(el));
+
+  try {
+    _pageFlip = new St.PageFlip(container, {
+      width:  isMobile ? bookW : Math.round(bookW / 2),
+      height: bookH,
+      size:   'fixed',
+      minWidth: 100,
+      minHeight: 100,
+      showCover: true,
+      mobileScrollSupport: true,
+      swipeDistance: 30,
+      usePortrait: isMobile,
+      startZIndex: 0,
+      drawShadow: true,
+      flippingTime: 700,
+      useMouseEvents: true,
+    });
+
+    _pageFlip.loadFromHTML(document.querySelectorAll('#book-container .page-content'));
+
+    _pageFlip.on('flip', e => {
+      const cur = e.data + 1;
+      document.getElementById('cur-page').textContent = cur;
+      updateNavBtns(cur, pages.length);
+    });
+
+    updateNavBtns(1, pages.length);
+  } catch(err) {
+    console.error('StPageFlip error:', err);
+    // Fallback: simple image carousel
+    initFallbackViewer(pages, container, bookW, bookH);
+  }
+}
+
+// Simple fallback viewer if StPageFlip fails
+function initFallbackViewer(pages, container, w, h) {
+  container.innerHTML = '';
+  let cur = 0;
+  const render = () => {
+    container.innerHTML = `
+      <div style="width:${w}px;height:${h}px;max-width:100%;border-radius:8px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.6);">
+        <img src="${pages[cur]}" style="width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;" draggable="false" oncontextmenu="return false"/>
+      </div>`;
+    document.getElementById('cur-page').textContent = cur + 1;
+    updateNavBtns(cur + 1, pages.length);
+  };
+  window._fallbackFlip = { cur: () => cur, next: () => { if (cur < pages.length-1) { cur++; render(); } }, prev: () => { if (cur > 0) { cur--; render(); } } };
+  render();
+}
+
+function updateNavBtns(cur, total) {
+  document.getElementById('btn-prev').disabled = (cur <= 1);
+  document.getElementById('btn-next').disabled = (cur >= total);
 }
 
 function previewNext() {
-  if (_previewCur < _previewPages.length - 1) {
-    _previewCur++;
-    renderPreviewPage();
-  }
+  if (_pageFlip) { _pageFlip.flipNext('bottom'); }
+  else if (window._fallbackFlip) { window._fallbackFlip.next(); }
 }
-
 function previewPrev() {
-  if (_previewCur > 0) {
-    _previewCur--;
-    renderPreviewPage();
-  }
+  if (_pageFlip) { _pageFlip.flipPrev('bottom'); }
+  else if (window._fallbackFlip) { window._fallbackFlip.prev(); }
 }
 
 function closePreview() {
   document.getElementById('preview-backdrop').classList.remove('open');
+  if (_pageFlip) { try { _pageFlip.destroy(); } catch(e) {} _pageFlip = null; }
+  window._fallbackFlip = null;
   document.getElementById('book-container').innerHTML = '';
-  _previewPages = [];
-  _previewCur = 0;
 }
-
 function closePreviewIfBackdrop(e) {
   if (e.target.id === 'preview-backdrop') closePreview();
 }
 
 // Close preview with Escape key
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    if (document.getElementById('preview-backdrop').classList.contains('open')) closePreview();
-    if (document.getElementById('modal-backdrop').classList.contains('open')) closeModal();
+  if (e.key === 'Escape' && document.getElementById('preview-backdrop').classList.contains('open')) {
+    closePreview();
   }
 });
 
