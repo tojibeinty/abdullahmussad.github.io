@@ -180,6 +180,24 @@
       .app-btn { justify-content: center; }
     }
 
+    /* ===== USAGE GUIDE SLIDER ===== */
+    .guide-section { margin: 1.25rem 0; }
+    .guide-label { font-size: 13px; font-weight: 700; color: #085041; background: #E1F5EE; display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; margin-bottom: 12px; }
+    .guide-slider-wrap { position: relative; overflow: hidden; border-radius: 14px; background: #f7f7f7; touch-action: pan-y; }
+    .guide-slider-track { display: flex; transition: transform 0.32s cubic-bezier(.4,0,.2,1); will-change: transform; }
+    .guide-slide { flex: 0 0 100%; min-width: 0; }
+    .guide-slide img { width: 100%; max-height: 260px; object-fit: cover; display: block; border-radius: 14px 14px 0 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
+    .guide-slide-caption { padding: 10px 14px 12px; font-size: 13px; color: #444; line-height: 1.65; min-height: 40px; text-align: center; background: #fff; border-radius: 0 0 14px 14px; border-top: 0.5px solid #eee; }
+    .guide-slide-caption:empty { display: none; }
+    .guide-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+    .guide-btn { width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid #ddd; background: #fff; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; flex-shrink: 0; }
+    .guide-btn:hover:not(:disabled) { background: #E1F5EE; border-color: #1D9E75; }
+    .guide-btn:disabled { opacity: 0.35; cursor: default; }
+    .guide-dots { display: flex; gap: 5px; align-items: center; }
+    .guide-dot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; transition: background 0.2s, transform 0.2s; cursor: pointer; }
+    .guide-dot.active { background: #1D9E75; transform: scale(1.25); }
+    .guide-count { font-size: 12px; color: #999; min-width: 36px; text-align: center; }
+
     /* ===== PRICE TAG ===== */
     .card-price {
       margin-top: 8px;
@@ -927,14 +945,46 @@ function openBook(id) {
 function openStain(id) {
   const s = DATA.stains.find(x => x.id === id);
   if (!s) return;
+
+  // Build usage guide section if steps exist
+  let guideHtml = '';
+  const steps = (s.guideSteps || []).filter(st => st.img);
+  if (steps.length) {
+    const slides = steps.map((st, i) => `
+      <div class="guide-slide">
+        <img src="${st.img}" alt="خطوة ${i+1}"
+          onerror="this.style.display='none'"
+          oncontextmenu="return false" draggable="false"/>
+        <div class="guide-slide-caption">${st.caption || ''}</div>
+      </div>`).join('');
+    const dots = steps.map((_, i) => `<div class="guide-dot${i===0?' active':''}" onclick="_guideTo('stain-guide',${i})"></div>`).join('');
+    guideHtml = `
+      <div class="guide-section">
+        <div class="guide-label">📸 دليل الاستخدام المصور</div>
+        <div class="guide-slider-wrap" id="stain-guide-wrap">
+          <div class="guide-slider-track" id="stain-guide-track">${slides}</div>
+        </div>
+        <div class="guide-nav">
+          <button class="guide-btn" id="stain-guide-prev" onclick="_guidePrev('stain-guide')" ${steps.length<=1?'disabled':''}>→</button>
+          <div class="guide-dots" id="stain-guide-dots">${dots}</div>
+          <span class="guide-count" id="stain-guide-count">1 / ${steps.length}</span>
+          <button class="guide-btn" id="stain-guide-next" onclick="_guideNext('stain-guide')" ${steps.length<=1?'disabled':''}>←</button>
+        </div>
+      </div>`;
+  }
+
   document.getElementById('modal-content').innerHTML = `
     <div class="modal-badge-blue">صبغة مختبرية</div>
     <div class="modal-title">${s.name}</div>
     <img class="modal-img" src="${s.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" alt="${s.name}" />
     <div class="modal-img-placeholder" style="background:${s.emojiBg};">${s.emoji}</div>
     <div class="modal-desc">${s.desc}</div>
+    ${guideHtml}
     ${buildOrderForm(s.name)}`;
   document.getElementById('modal-backdrop').classList.add('open');
+
+  // Init swipe touch on guide
+  if (steps.length > 1) _guideInitTouch('stain-guide', steps.length);
 }
 
 function openCourse(id) {
@@ -981,6 +1031,59 @@ function sendWhatsapp(itemName) {
       <div style="font-size:18px;font-weight:700;color:#111;margin-bottom:8px;">جاري فتح واتساب...</div>
       <div style="font-size:14px;color:#666;">شكراً ${name}، سيتواصل معك عبدالله مساعد قريباً.</div>
     </div>`;
+}
+
+// ===== USAGE GUIDE SLIDER LOGIC =====
+const _guideState = {};
+
+function _guideTo(key, idx) {
+  const st = _guideState[key];
+  if (!st) return;
+  st.cur = Math.max(0, Math.min(idx, st.total - 1));
+  const track = document.getElementById(key + '-track');
+  if (track) track.style.transform = `translateX(${st.cur * 100}%)`;
+  // dots
+  document.querySelectorAll(`#${key}-dots .guide-dot`).forEach((d, i) => d.classList.toggle('active', i === st.cur));
+  // count
+  const cnt = document.getElementById(key + '-count');
+  if (cnt) cnt.textContent = `${st.cur + 1} / ${st.total}`;
+  // btns
+  const prev = document.getElementById(key + '-prev');
+  const next = document.getElementById(key + '-next');
+  if (prev) prev.disabled = st.cur <= 0;
+  if (next) next.disabled = st.cur >= st.total - 1;
+}
+
+function _guidePrev(key) {
+  const st = _guideState[key];
+  if (st) _guideTo(key, st.cur - 1);
+}
+
+function _guideNext(key) {
+  const st = _guideState[key];
+  if (st) _guideTo(key, st.cur + 1);
+}
+
+function _guideInitTouch(key, total) {
+  _guideState[key] = { cur: 0, total };
+  const wrap = document.getElementById(key + '-wrap');
+  if (!wrap) return;
+  let startX = 0, isDragging = false;
+  wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    if (!isDragging) return;
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
+    isDragging = false;
+  }, { passive: true });
+  // Also support mouse drag
+  wrap.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
+  wrap.addEventListener('mouseup', e => {
+    if (!isDragging) return;
+    const diff = startX - e.clientX;
+    if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
+    isDragging = false;
+  });
 }
 
 function closeModal() { document.getElementById('modal-backdrop').classList.remove('open'); }
@@ -1105,6 +1208,21 @@ function renderStainsAdmin() {
         <div class="admin-field"><label>لون خلفية الإيموجي</label><input type="text" id="seb-${s.id}" value="${s.emojiBg}" /></div>
         <div class="admin-field"><label>الوصف</label><textarea id="sd-${s.id}">${s.desc}</textarea></div>
         <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="spr-${s.id}" value="${s.price||''}" placeholder="مثال: 15,000 د.ع" /></div>
+        <div class="admin-field">
+          <label>📸 دليل الاستخدام المصور (صور + وصف لكل خطوة)</label>
+          <div class="features-list" id="guide-steps-${s.id}">
+            ${(s.guideSteps||[]).map((st,gi) => `
+              <div class="feature-row" id="guide-row-${s.id}-${gi}" style="flex-direction:column;align-items:stretch;gap:4px;background:#f9f9f9;padding:8px;border-radius:8px;border:0.5px solid #eee;">
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <span style="font-size:11px;color:#aaa;min-width:20px;">خ${gi+1}</span>
+                  <input type="text" id="gs-img-${s.id}-${gi}" value="${st.img||''}" placeholder="رابط صورة الخطوة https://..." style="flex:1;font-size:12px;direction:ltr;" />
+                  <button class="btn-remove-feat" onclick="removeGuideStep('${s.id}',${gi})">✕</button>
+                </div>
+                <input type="text" id="gs-cap-${s.id}-${gi}" value="${st.caption||''}" placeholder="وصف الخطوة (اختياري)..." style="font-size:12px;" />
+              </div>`).join('')}
+          </div>
+          <button class="btn-add-feat" style="margin-top:6px;" onclick="addGuideStep('${s.id}')">+ إضافة خطوة</button>
+        </div>
         <button class="btn-save" style="margin-top:8px;" onclick="saveStain('${s.id}')">💾 حفظ</button>
       </div>
     </div>`).join('');
@@ -1127,7 +1245,35 @@ async function saveStain(id) {
   s.emojiBg = document.getElementById('seb-'+id).value;
   s.desc = document.getElementById('sd-'+id).value;
   s.price = (document.getElementById('spr-'+id) ? document.getElementById('spr-'+id).value : (s.price||'')).trim();
+  // Save guide steps
+  s.guideSteps = [];
+  let gi = 0;
+  while (document.getElementById('gs-img-'+id+'-'+gi)) {
+    const img = document.getElementById('gs-img-'+id+'-'+gi).value.trim();
+    const caption = document.getElementById('gs-cap-'+id+'-'+gi).value.trim();
+    if (img) s.guideSteps.push({ img, caption });
+    gi++;
+  }
   await saveData(); renderStains(); showSuccess('stains-success');
+}
+
+async function addGuideStep(stainId) {
+  const s = DATA.stains.find(x => x.id === stainId);
+  if (!s) return;
+  if (!s.guideSteps) s.guideSteps = [];
+  s.guideSteps.push({ img: '', caption: '' });
+  await saveData(); renderStainsAdmin();
+  const body = document.getElementById('stain-body-'+stainId);
+  if (body) body.classList.add('open');
+}
+
+async function removeGuideStep(stainId, gi) {
+  const s = DATA.stains.find(x => x.id === stainId);
+  if (!s || !s.guideSteps) return;
+  s.guideSteps.splice(gi, 1);
+  await saveData(); renderStainsAdmin();
+  const body = document.getElementById('stain-body-'+stainId);
+  if (body) body.classList.add('open');
 }
 
 async function deleteStain(id) {
