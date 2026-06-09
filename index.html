@@ -183,13 +183,13 @@
     /* ===== USAGE GUIDE SLIDER ===== */
     .guide-section { margin: 1.25rem 0; }
     .guide-label { font-size: 13px; font-weight: 700; color: #085041; background: #E1F5EE; display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; margin-bottom: 12px; }
-    .guide-slider-wrap { position: relative; overflow: hidden; border-radius: 14px; background: #f7f7f7; touch-action: pan-y; }
-    .guide-slider-track { display: flex; transition: transform 0.32s cubic-bezier(.4,0,.2,1); will-change: transform; }
-    .guide-slide { flex: 0 0 100%; min-width: 0; }
-    .guide-slide img { width: 100%; max-height: 260px; object-fit: cover; display: block; border-radius: 14px 14px 0 0; pointer-events: none; user-select: none; -webkit-user-drag: none; }
-    .guide-slide-caption { padding: 10px 14px 12px; font-size: 13px; color: #444; line-height: 1.65; min-height: 40px; text-align: center; background: #fff; border-radius: 0 0 14px 14px; border-top: 0.5px solid #eee; }
-    .guide-slide-caption:empty { display: none; }
-    .guide-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+    .guide-slider-wrap { position: relative; overflow: hidden; border-radius: 14px; background: #f7f7f7; }
+    .guide-slider-track { display: flex; flex-direction: row; transition: transform 0.32s cubic-bezier(.4,0,.2,1); will-change: transform; direction: ltr; }
+    .guide-slide { flex: 0 0 100%; width: 100%; min-width: 0; }
+    .guide-slide img { width: 100%; height: 220px; object-fit: cover; display: block; border-radius: 14px 14px 0 0; pointer-events: none; user-select: none; -webkit-user-drag: none; background: #eee; }
+    .guide-slide-caption { padding: 10px 14px 12px; font-size: 13px; color: #444; line-height: 1.65; text-align: center; background: #fff; border-radius: 0 0 14px 14px; border-top: 0.5px solid #eee; direction: rtl; }
+    .guide-slide-caption:empty { padding: 0; min-height: 0; }
+    .guide-nav { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; direction: ltr; }
     .guide-btn { width: 34px; height: 34px; border-radius: 50%; border: 0.5px solid #ddd; background: #fff; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; flex-shrink: 0; }
     .guide-btn:hover:not(:disabled) { background: #E1F5EE; border-color: #1D9E75; }
     .guide-btn:disabled { opacity: 0.35; cursor: default; }
@@ -1041,7 +1041,7 @@ function _guideTo(key, idx) {
   if (!st) return;
   st.cur = Math.max(0, Math.min(idx, st.total - 1));
   const track = document.getElementById(key + '-track');
-  if (track) track.style.transform = `translateX(${st.cur * 100}%)`;
+  if (track) track.style.transform = `translateX(-${st.cur * 100}%)`;
   // dots
   document.querySelectorAll(`#${key}-dots .guide-dot`).forEach((d, i) => d.classList.toggle('active', i === st.cur));
   // count
@@ -1066,23 +1066,25 @@ function _guideNext(key) {
 
 function _guideInitTouch(key, total) {
   _guideState[key] = { cur: 0, total };
-  const wrap = document.getElementById(key + '-wrap');
-  if (!wrap) return;
-  let startX = 0, isDragging = false;
-  wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
-  wrap.addEventListener('touchend', e => {
-    if (!isDragging) return;
-    const diff = startX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
-    isDragging = false;
-  }, { passive: true });
-  // Also support mouse drag
-  wrap.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
-  wrap.addEventListener('mouseup', e => {
-    if (!isDragging) return;
-    const diff = startX - e.clientX;
-    if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
-    isDragging = false;
+  // Wait for DOM to render
+  requestAnimationFrame(() => {
+    const wrap = document.getElementById(key + '-wrap');
+    if (!wrap) return;
+    let startX = 0, isDragging = false;
+    wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+    wrap.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
+      isDragging = false;
+    }, { passive: true });
+    wrap.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; e.preventDefault(); });
+    wrap.addEventListener('mouseup', e => {
+      if (!isDragging) return;
+      const diff = startX - e.clientX;
+      if (Math.abs(diff) > 40) diff > 0 ? _guideNext(key) : _guidePrev(key);
+      isDragging = false;
+    });
   });
 }
 
