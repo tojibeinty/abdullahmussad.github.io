@@ -48,6 +48,17 @@
     .stain-name { font-size: 12px; font-weight: 700; color: #111; margin-bottom: 1px; }
     .stain-type { font-size: 11px; color: #888; }
 
+    /* ===== FILTERS ===== */
+    .filters-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
+    .filter-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.15s; position: relative; }
+    .filter-card:hover { border-color: #1D9E75; transform: translateY(-2px); }
+    .filter-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .filter-img-placeholder { width: 100%; height: 110px; display: none; align-items: center; justify-content: center; font-size: 32px; background: #E1F5EE; }
+    .filter-body { padding: 10px 12px 12px; }
+    .filter-name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .filter-desc { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 4px; }
+    @media (max-width: 520px) { .filters-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
     /* ===== COURSES ===== */
     .courses-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
     .course-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; padding: 1.25rem 1rem; cursor: pointer; transition: border-color 0.2s, transform 0.15s; text-align: center; position: relative; overflow: hidden; }
@@ -167,6 +178,16 @@
       .app-features { grid-template-columns: 1fr; }
       .app-btns { flex-direction: column; }
       .app-btn { justify-content: center; }
+    }
+
+    /* ===== PRICE TAG ===== */
+    .card-price {
+      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1D9E75;
+      font-family: 'Tajawal', sans-serif;
+      letter-spacing: 0.3px;
     }
 
     /* ===== BOOK PREVIEW BUTTON ===== */
@@ -345,6 +366,13 @@
   <!-- ===== DIVIDER ===== -->
   <div class="divider"></div>
 
+  <!-- ===== FILTERS ===== -->
+  <div class="section-label">الفلاتر المختبرية</div>
+  <div class="filters-grid" id="filters-grid"></div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider"></div>
+
   <!-- ===== APP ===== -->
   <div id="app-section-wrap"></div>
 
@@ -425,6 +453,7 @@
       <button class="admin-tab active" onclick="switchTab('profile')">الملف الشخصي</button>
       <button class="admin-tab" onclick="switchTab('books')">الكتب</button>
       <button class="admin-tab" onclick="switchTab('stains')">الصبغات</button>
+      <button class="admin-tab" onclick="switchTab('filters')">الفلاتر</button>
       <button class="admin-tab" onclick="switchTab('courses')">الدورات</button>
       <button class="admin-tab" onclick="switchTab('app')">📱 التطبيق</button>
     </div>
@@ -462,6 +491,13 @@
         <div class="admin-success" id="stains-success">✅ تم الحفظ بنجاح</div>
         <button class="btn-add" onclick="addStain()">+ إضافة صبغة جديدة</button>
         <div id="stains-admin-list"></div>
+      </div>
+
+      <!-- ===== TAB: FILTERS ===== -->
+      <div class="admin-section" id="tab-filters">
+        <div class="admin-success" id="filters-success">✅ تم الحفظ بنجاح</div>
+        <button class="btn-add" onclick="addFilter()">+ إضافة فلتر جديد</button>
+        <div id="filters-admin-list"></div>
       </div>
 
       <!-- ===== TAB: COURSES ===== -->
@@ -664,6 +700,7 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'books') renderBooksAdmin();
   if (tab === 'stains') renderStainsAdmin();
+  if (tab === 'filters') renderFiltersAdmin();
   if (tab === 'courses') renderCoursesAdmin();
   if (tab === 'app') populateAppForm();
 }
@@ -740,6 +777,7 @@ function renderBooks() {
       ${b.img ? `<img src="${b.img}" alt="${b.title}" style="width:56px;height:72px;object-fit:cover;border-radius:4px;margin:0 auto 0.75rem;display:block;box-shadow:2px 4px 12px rgba(0,0,0,0.12);" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="book-cover" style="background:${b.coverGrad};display:none;">${b.key||b.title.substring(0,3)}</div>` : `<div class="book-cover" style="background:${b.coverGrad};">${b.key||b.title.substring(0,3)}</div>`}
       <div class="book-title">${b.title.split('—')[0].trim()}</div>
       <div class="book-sub">${b.sub}</div>
+      ${b.price ? `<div class="card-price">${b.price}</div>` : ''}
     </div>`).join('');
 }
 
@@ -752,6 +790,7 @@ function renderStains() {
       <div class="stain-body">
         <div class="stain-name">${s.name}</div>
         <div class="stain-type">${s.type}</div>
+        ${s.price ? `<div class="card-price">${s.price}</div>` : ''}
       </div>
     </div>`).join('');
 }
@@ -769,7 +808,106 @@ function renderCourses() {
       <div class="course-badge">دورة مختبرية</div>
       <div class="course-title">${c.title}</div>
       <div class="course-sub">${c.sub}</div>
+      ${c.price ? `<div class="card-price">${c.price}</div>` : ''}
     </div>`).join('');
+}
+
+// ===== FILTERS =====
+function renderFilters() {
+  if (!DATA.filters) DATA.filters = [];
+  const grid = document.getElementById('filters-grid');
+  if (!grid) return;
+  if (DATA.filters.length === 0) {
+    grid.innerHTML = '<div style="color:#aaa;font-size:13px;grid-column:1/-1;text-align:center;padding:2rem;">لا توجد فلاتر بعد</div>';
+    return;
+  }
+  grid.innerHTML = DATA.filters.map(f => `
+    <div class="filter-card" onclick="openFilter('${f.id}')">
+      ${f.isNew ? '<div class="new-badge">جديد</div>' : ''}
+      ${f.img ? `<img class="filter-img" src="${f.img}" alt="${f.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="filter-img-placeholder" style="display:none;">🔬</div>` : `<div class="filter-img-placeholder" style="display:flex;">🔬</div>`}
+      <div class="filter-body">
+        <div class="filter-name">${f.name}</div>
+        <div class="filter-desc">${f.desc}</div>
+        ${f.price ? `<div class="card-price">${f.price}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function renderFiltersAdmin() {
+  if (!DATA.filters) DATA.filters = [];
+  document.getElementById('filters-admin-list').innerHTML = DATA.filters.map(f => `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${f.name}</div>
+        <div>
+          <button class="btn-delete" onclick="deleteFilter('${f.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('filter-body-${f.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="filter-body-${f.id}">
+        <div class="admin-field"><label>اسم الفلتر</label><input type="text" id="fn-${f.id}" value="${f.name}" /></div>
+        <div class="admin-field"><label>الوصف</label><textarea id="fd-${f.id}">${f.desc||''}</textarea></div>
+        <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="fpr-${f.id}" value="${f.price||''}" placeholder="مثال: 10,000 د.ع" /></div>
+        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="fi-${f.id}" value="${f.img||''}" placeholder="https://..." /></div>
+        <div class="admin-field"><label>📄 رابط PDF المعاينة (اختياري)</label><input type="text" id="fpdf-${f.id}" value="${f.previewPdf||''}" placeholder="https://drive.google.com/file/d/.../preview" style="direction:ltr;font-size:12px;" /></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="checkbox" id="fnew-${f.id}" ${f.isNew?'checked':''} />
+          <label for="fnew-${f.id}" style="font-size:13px;color:#555;">عرض شارة "جديد"</label>
+        </div>
+        <button class="btn-save" style="margin-top:12px;" onclick="saveFilter('${f.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+async function addFilter() {
+  if (!DATA.filters) DATA.filters = [];
+  const id = 'filter_' + Date.now();
+  DATA.filters.push({ id, name: 'فلتر جديد', desc: '', price: '', img: '', previewPdf: '', isNew: true });
+  await saveData(); renderFiltersAdmin(); renderFilters();
+  setTimeout(() => { document.getElementById('filter-body-'+id) && document.getElementById('filter-body-'+id).classList.add('open'); }, 100);
+}
+
+async function saveFilter(id) {
+  const f = DATA.filters.find(x => x.id === id);
+  if (!f) return;
+  f.name       = document.getElementById('fn-'+id).value;
+  f.desc       = document.getElementById('fd-'+id).value;
+  f.price      = document.getElementById('fpr-'+id).value.trim();
+  f.img        = document.getElementById('fi-'+id).value.trim();
+  f.previewPdf = document.getElementById('fpdf-'+id).value.trim();
+  f.isNew      = document.getElementById('fnew-'+id).checked;
+  await saveData(); renderFilters(); renderFiltersAdmin(); showSuccess('filters-success');
+}
+
+async function deleteFilter(id) {
+  if (!confirm('هل تريد حذف هذا الفلتر؟')) return;
+  DATA.filters = DATA.filters.filter(x => x.id !== id);
+  await saveData(); renderFiltersAdmin(); renderFilters();
+}
+
+function openFilter(id) {
+  const f = DATA.filters.find(x => x.id === id);
+  if (!f) return;
+  const wa = DATA.profile?.whatsapp || '';
+  const msg = encodeURIComponent(`مرحباً، أريد طلب: ${f.name}${f.price ? ' — السعر: ' + f.price : ''}`);
+  document.getElementById('modal-content').innerHTML = `
+    <div class="book-badge" style="margin-bottom:0.75rem;">🔬 فلتر مختبري</div>
+    <div class="modal-title">${f.name}</div>
+    ${f.img ? `<img class="modal-img" src="${f.img}" alt="${f.name}" onerror="this.style.display='none';" />` : ''}
+    <div class="modal-desc">${f.desc}</div>
+    ${f.price ? `<div style="font-size:20px;font-weight:800;color:#1D9E75;margin:12px 0;">${f.price}</div>` : ''}
+    ${f.previewPdf ? `<button class="btn-preview" style="margin-bottom:12px;" onclick="openPreviewDirect_filter('${f.id}')">📄 معاينة الفلتر</button>` : ''}
+    ${wa ? `<a href="https://wa.me/${wa}?text=${msg}" target="_blank" class="btn-preview" style="background:linear-gradient(135deg,#25D366,#128C7E);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.556 4.124 1.527 5.855L0 24l6.335-1.507A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.268-1.533l-.378-.225-3.922.932.99-3.82-.246-.393A9.818 9.818 0 1112 21.818z"/></svg>
+      طلب عبر واتساب
+    </a>` : ''}`;
+  document.getElementById('modal-backdrop').classList.add('open');
+}
+
+function openPreviewDirect_filter(filterId) {
+  const f = DATA.filters.find(x => x.id === filterId);
+  if (!f) return;
+  openPreviewPdf(f.previewPdf || '', f.name);
 }
 
 // ===== MODAL OPENERS =====
@@ -881,6 +1019,7 @@ function renderBooksAdmin() {
           <select id="bb-${b.id}"><option value="modal-badge-teal" ${b.badgeClass==='modal-badge-teal'?'selected':''}>أخضر</option><option value="modal-badge-blue" ${b.badgeClass==='modal-badge-blue'?'selected':''}>أزرق</option></select>
         </div>
         <div class="admin-field"><label>نص الشارة</label><input type="text" id="bbn-${b.id}" value="${b.badge}" /></div>
+        <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="bpr-${b.id}" value="${b.price||''}" placeholder="مثال: 25,000 د.ع" /></div>
         <div class="admin-field">
           <label>المميزات</label>
           <div class="features-list" id="feats-${b.id}">${(b.features||[]).map((f,fi) => `<div class="feature-row"><input type="text" value="${f}" id="bf-${b.id}-${fi}" /><button class="btn-remove-feat" onclick="removeFeat('${b.id}',${fi})">✕</button></div>`).join('')}</div>
@@ -918,15 +1057,16 @@ async function saveBook(id) {
   b.coverGrad = document.getElementById('bc-'+id).value;
   b.badgeClass = document.getElementById('bb-'+id).value;
   b.badge = document.getElementById('bbn-'+id).value;
+  b.price = (document.getElementById('bpr-'+id) ? document.getElementById('bpr-'+id).value : (b.price||'')).trim();
   b.isNew = document.getElementById('bn-'+id).checked;
-  b.previewPdf = (document.getElementById('bpdf-'+id).value || '').trim();
+  b.previewPdf = (document.getElementById('bpdf-'+id) ? document.getElementById('bpdf-'+id).value : (b.previewPdf||'')).trim();
   b.features = [];
   let fi = 0;
   while (document.getElementById('bf-'+id+'-'+fi)) {
     b.features.push(document.getElementById('bf-'+id+'-'+fi).value);
     fi++;
   }
-  await saveData(); renderBooks(); showSuccess('books-success');
+  await saveData(); renderBooks(); renderBooksAdmin(); showSuccess('books-success');
 }
 
 async function deleteBook(id) {
@@ -969,6 +1109,7 @@ function renderStainsAdmin() {
         <div class="admin-field"><label>إيموجي (بديل الصورة)</label><input type="text" id="se-${s.id}" value="${s.emoji}" /></div>
         <div class="admin-field"><label>لون خلفية الإيموجي</label><input type="text" id="seb-${s.id}" value="${s.emojiBg}" /></div>
         <div class="admin-field"><label>الوصف</label><textarea id="sd-${s.id}">${s.desc}</textarea></div>
+        <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="spr-${s.id}" value="${s.price||''}" placeholder="مثال: 15,000 د.ع" /></div>
         <button class="btn-save" style="margin-top:8px;" onclick="saveStain('${s.id}')">💾 حفظ</button>
       </div>
     </div>`).join('');
@@ -990,6 +1131,7 @@ async function saveStain(id) {
   s.emoji = document.getElementById('se-'+id).value;
   s.emojiBg = document.getElementById('seb-'+id).value;
   s.desc = document.getElementById('sd-'+id).value;
+  s.price = (document.getElementById('spr-'+id) ? document.getElementById('spr-'+id).value : (s.price||'')).trim();
   await saveData(); renderStains(); showSuccess('stains-success');
 }
 
@@ -1230,14 +1372,35 @@ function openPreviewPdf(pdfUrl, bookTitle) {
     return;
   }
 
-  // Embed PDF via iframe
-  const iframe = document.createElement('iframe');
-  iframe.src = pdfUrl;
-  iframe.style.cssText = 'width:100%;height:100%;min-height:65vh;border:none;border-radius:10px;background:#222;';
-  iframe.setAttribute('allowfullscreen', '');
-  document.getElementById('book-container').style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;';
-  document.getElementById('preview-stage').style.padding = '8px';
-  document.getElementById('book-container').appendChild(iframe);
+  // Convert any Google Drive link to embed-friendly format
+  let embedUrl = pdfUrl;
+  const driveMatch = pdfUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (driveMatch) {
+    embedUrl = `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+  }
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile && driveMatch) {
+    // On mobile: show open button instead of iframe (Google blocks iframe on mobile)
+    document.getElementById('book-container').style.cssText = 'width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;';
+    document.getElementById('book-container').innerHTML = `
+      <div style="font-size:48px;">📄</div>
+      <div style="color:#ccc;font-family:Tajawal,sans-serif;font-size:15px;text-align:center;">اضغط لفتح معاينة الكتاب</div>
+      <a href="https://drive.google.com/file/d/${driveMatch[1]}/view?usp=sharing" target="_blank"
+         style="background:linear-gradient(135deg,#1D9E75,#085041);color:#fff;padding:12px 28px;border-radius:12px;font-family:Tajawal,sans-serif;font-size:15px;font-weight:700;text-decoration:none;display:inline-block;">
+        📖 فتح المعاينة
+      </a>`;
+  } else {
+    // Desktop: embed via iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = embedUrl;
+    iframe.style.cssText = 'width:100%;height:100%;min-height:65vh;border:none;border-radius:10px;background:#222;';
+    iframe.setAttribute('allowfullscreen', '');
+    document.getElementById('book-container').style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;';
+    document.getElementById('preview-stage').style.padding = '8px';
+    document.getElementById('book-container').appendChild(iframe);
+  }
 }
 
 async function openPreviewWithPages(pages, bookTitle) {
@@ -1457,6 +1620,7 @@ document.addEventListener('keydown', e => {
   renderProfile();
   renderBooks();
   renderStains();
+  renderFilters();
   renderCourses();
   renderApp();
 })();
