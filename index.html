@@ -1521,7 +1521,8 @@ function renderStainsAdmin() {
               <div class="feature-row" id="guide-row-${s.id}-${gi}" style="flex-direction:column;align-items:stretch;gap:4px;background:#f9f9f9;padding:8px;border-radius:8px;border:0.5px solid #eee;">
                 <div style="display:flex;gap:6px;align-items:center;">
                   <span style="font-size:11px;color:#aaa;min-width:20px;">خ${gi+1}</span>
-                  <input type="text" id="gs-img-${s.id}-${gi}" value="${st.img||''}" placeholder="رابط صورة الخطوة https://..." style="flex:1;font-size:12px;direction:ltr;" />
+                  <input type="text" id="gs-img-${s.id}-${gi}" value="${st.img||''}" placeholder="رابط صورة الخطوة..." style="flex:1;font-size:12px;direction:ltr;" />
+                  <button class="upload-btn" style="padding:4px 8px;margin-top:0;flex-shrink:0;" onclick="triggerImgUpload('gs-img-${s.id}-${gi}',null,null)">↑</button>
                   <button class="btn-remove-feat" onclick="removeGuideStep('${s.id}',${gi})">✕</button>
                 </div>
                 <input type="text" id="gs-cap-${s.id}-${gi}" value="${st.caption||''}" placeholder="وصف الخطوة (اختياري)..." style="font-size:12px;" />
