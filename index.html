@@ -217,6 +217,11 @@
     .upload-preview { margin-top: 6px; display: none; }
     .upload-preview img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
 
+    /* ===== IMAGE FIELD WITH UPLOAD ===== */
+    .img-field-row { display: flex; gap: 6px; align-items: center; margin-top: 4px; }
+    .img-field-row input[type="text"] { flex: 1; min-width: 0; }
+    .img-field-row .upload-btn { flex-shrink: 0; margin-top: 0; white-space: nowrap; }
+
     /* ===== PRICE TAG ===== */
     .card-price {
       margin-top: 8px;
@@ -514,10 +519,13 @@
           <div class="admin-field"><label>النبذة التعريفية</label><textarea id="p-bio"></textarea></div>
           <div class="admin-field"><label>رقم الهاتف</label><input type="text" id="p-phone" /></div>
           <div class="admin-field"><label>رقم واتساب (مع رمز الدولة بدون +)</label><input type="text" id="p-whatsapp" placeholder="9647701234567" /></div>
-          <div class="admin-field"><label>رابط صورتك الشخصية</label><input type="text" id="p-avatar" placeholder="https://..." oninput="previewAvatar()" />
-            <button id="upload-btn-p-avatar" class="upload-btn" onclick="triggerImgUpload('p-avatar','avatar-preview',function(url){document.getElementById('avatar-preview').style.display='block';document.getElementById('avatar-preview-img').src=url;})">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-            </button>
+          <div class="admin-field"><label>رابط صورتك الشخصية</label>
+            <div class="img-field-row">
+              <input type="text" id="p-avatar" placeholder="https://..." oninput="previewAvatar()" />
+              <button id="upload-btn-p-avatar" class="upload-btn" onclick="triggerImgUpload('p-avatar','avatar-preview',function(url){document.getElementById('avatar-preview').style.display='block';document.getElementById('avatar-preview-img').src=url;})">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+              </button>
+            </div>
             <div id="avatar-preview" style="margin-top:8px;display:none;">
               <img id="avatar-preview-img" src="" alt="معاينة" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #1D9E75;" onerror="this.parentElement.style.display='none'" />
             </div>
@@ -1011,10 +1019,12 @@ function renderStandsAdmin() {
         <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="stnd-pr-${st.id}" value="${st.price||''}" placeholder="مثال: 35,000 د.ع" /></div>
         <div class="admin-field">
           <label>رابط الصورة</label>
-          <input type="text" id="stnd-i-${st.id}" value="${st.img||''}" placeholder="https://..." oninput="previewStandImg('${st.id}')" />
-          <button id="upload-btn-stnd-i-${st.id}" class="upload-btn" onclick="triggerImgUpload('stnd-i-${st.id}','stnd-ipreview-${st.id}',null)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-          </button>
+          <div class="img-field-row">
+            <input type="text" id="stnd-i-${st.id}" value="${st.img||''}" placeholder="https://..." oninput="previewStandImg('${st.id}')" />
+            <button id="upload-btn-stnd-i-${st.id}" class="upload-btn" onclick="triggerImgUpload('stnd-i-${st.id}','stnd-ipreview-${st.id}',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+            </button>
+          </div>
           <div id="stnd-ipreview-${st.id}" class="upload-preview" style="${st.img?'display:block;':''}">
             <img src="${st.img||''}" alt="معاينة" onerror="this.style.display='none'" />
           </div>
@@ -1141,10 +1151,13 @@ function renderFiltersAdmin() {
         <div class="admin-field"><label>اسم الفلتر</label><input type="text" id="fn-${f.id}" value="${f.name}" /></div>
         <div class="admin-field"><label>الوصف</label><textarea id="fd-${f.id}">${f.desc||''}</textarea></div>
         <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="fpr-${f.id}" value="${f.price||''}" placeholder="مثال: 10,000 د.ع" /></div>
-        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="fi-${f.id}" value="${f.img||''}" placeholder="https://..." />
-          <button id="upload-btn-fi-${f.id}" class="upload-btn" onclick="triggerImgUpload('fi-${f.id}',null,null)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-          </button>
+        <div class="admin-field"><label>رابط الصورة</label>
+          <div class="img-field-row">
+            <input type="text" id="fi-${f.id}" value="${f.img||''}" placeholder="https://..." />
+            <button id="upload-btn-fi-${f.id}" class="upload-btn" onclick="triggerImgUpload('fi-${f.id}',null,null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+            </button>
+          </div>
         </div>
         <div class="admin-field"><label>📄 رابط PDF المعاينة (اختياري)</label><input type="text" id="fpdf-${f.id}" value="${f.previewPdf||''}" placeholder="https://drive.google.com/file/d/.../preview" style="direction:ltr;font-size:12px;" /></div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
@@ -1388,10 +1401,12 @@ function renderBooksAdmin() {
         <div class="admin-field"><label>الوصف</label><textarea id="bd-${b.id}">${b.desc}</textarea></div>
         <div class="admin-field">
           <label>رابط صورة الكتاب (اختياري — تستبدل لون الغلاف)</label>
-          <input type="text" id="bimg-${b.id}" value="${b.img||''}" placeholder="https://..." oninput="previewBookImg('${b.id}')" />
-          <button id="upload-btn-bimg-${b.id}" class="upload-btn" onclick="triggerImgUpload('bimg-${b.id}','bimg-preview-${b.id}',null)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-          </button>
+          <div class="img-field-row">
+            <input type="text" id="bimg-${b.id}" value="${b.img||''}" placeholder="https://..." oninput="previewBookImg('${b.id}')" />
+            <button id="upload-btn-bimg-${b.id}" class="upload-btn" onclick="triggerImgUpload('bimg-${b.id}','bimg-preview-${b.id}',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+            </button>
+          </div>
           <div id="bimg-preview-${b.id}" style="margin-top:6px;${b.img?'':'display:none;'}">
             <img src="${b.img||''}" alt="معاينة" style="width:56px;height:72px;object-fit:cover;border-radius:4px;border:1px solid #ddd;" onerror="this.style.display='none'" />
           </div>
@@ -1487,10 +1502,13 @@ function renderStainsAdmin() {
       <div class="collapse-body" id="stain-body-${s.id}">
         <div class="admin-field"><label>الاسم</label><input type="text" id="sn-${s.id}" value="${s.name}" /></div>
         <div class="admin-field"><label>النوع</label><input type="text" id="st-${s.id}" value="${s.type}" /></div>
-        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="si-${s.id}" value="${s.img}" placeholder="https://..." />
-          <button id="upload-btn-si-${s.id}" class="upload-btn" onclick="triggerImgUpload('si-${s.id}',null,null)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-          </button>
+        <div class="admin-field"><label>رابط الصورة</label>
+          <div class="img-field-row">
+            <input type="text" id="si-${s.id}" value="${s.img}" placeholder="https://..." />
+            <button id="upload-btn-si-${s.id}" class="upload-btn" onclick="triggerImgUpload('si-${s.id}',null,null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+            </button>
+          </div>
         </div>
         <div class="admin-field"><label>إيموجي (بديل الصورة)</label><input type="text" id="se-${s.id}" value="${s.emoji}" /></div>
         <div class="admin-field"><label>لون خلفية الإيموجي</label><input type="text" id="seb-${s.id}" value="${s.emojiBg}" /></div>
@@ -1589,10 +1607,12 @@ function renderCoursesAdmin() {
         <div class="admin-field"><label>لون خلفية الأيقونة</label><input type="text" id="cib-${c.id}" value="${c.iconBg}" /></div>
         <div class="admin-field">
           <label>رابط صورة الدورة (اختياري — تظهر في البطاقة والمودال)</label>
-          <input type="text" id="cimg-${c.id}" value="${c.img||''}" placeholder="https://..." oninput="previewCourseImg('${c.id}')" />
-          <button id="upload-btn-cimg-${c.id}" class="upload-btn" onclick="triggerImgUpload('cimg-${c.id}','cimg-preview-${c.id}',null)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
-          </button>
+          <div class="img-field-row">
+            <input type="text" id="cimg-${c.id}" value="${c.img||''}" placeholder="https://..." oninput="previewCourseImg('${c.id}')" />
+            <button id="upload-btn-cimg-${c.id}" class="upload-btn" onclick="triggerImgUpload('cimg-${c.id}','cimg-preview-${c.id}',null)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع
+            </button>
+          </div>
           <div id="cimg-preview-${c.id}" style="margin-top:6px;${c.img?'':'display:none;'}">
             <img src="${c.img||''}" alt="معاينة" style="width:100%;max-height:100px;object-fit:cover;border-radius:8px;border:1px solid #ddd;" onerror="this.style.display='none'" />
           </div>
