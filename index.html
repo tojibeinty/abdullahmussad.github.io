@@ -198,6 +198,25 @@
     .guide-dot.active { background: #1D9E75; transform: scale(1.25); }
     .guide-count { font-size: 12px; color: #999; min-width: 36px; text-align: center; }
 
+    /* ===== MICROSCOPE STANDS ===== */
+    .stands-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 2.5rem; }
+    .stand-card { background: #fff; border: 0.5px solid #e5e5e5; border-radius: 16px; overflow: hidden; cursor: pointer; transition: border-color 0.2s, transform 0.15s; position: relative; }
+    .stand-card:hover { border-color: #1D9E75; transform: translateY(-2px); }
+    .stand-img { width: 100%; height: 110px; object-fit: cover; display: block; }
+    .stand-img-placeholder { width: 100%; height: 110px; display: none; align-items: center; justify-content: center; font-size: 32px; background: #E1F5EE; }
+    .stand-body { padding: 10px 12px 12px; }
+    .stand-name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 3px; }
+    .stand-desc { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 4px; }
+    @media (max-width: 520px) { .stands-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    /* ===== CLOUDINARY UPLOAD BUTTON ===== */
+    .upload-btn { display: inline-flex; align-items: center; gap: 6px; background: #f0f7ff; color: #1a5fa8; border: 1px solid #b3d1f7; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Tajawal', sans-serif; margin-top: 6px; transition: background 0.15s; }
+    .upload-btn:hover { background: #dbeafe; }
+    .upload-btn:disabled { opacity: 0.5; cursor: default; }
+    .upload-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .upload-preview { margin-top: 6px; display: none; }
+    .upload-preview img { width: 72px; height: 72px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+
     /* ===== PRICE TAG ===== */
     .card-price {
       margin-top: 8px;
@@ -391,6 +410,13 @@
   <!-- ===== DIVIDER ===== -->
   <div class="divider"></div>
 
+  <!-- ===== STANDS ===== -->
+  <div class="section-label">ستاند المجهر</div>
+  <div class="stands-grid" id="stands-grid"></div>
+
+  <!-- ===== DIVIDER ===== -->
+  <div class="divider"></div>
+
   <!-- ===== APP ===== -->
   <div id="app-section-wrap"></div>
 
@@ -472,6 +498,7 @@
       <button class="admin-tab" onclick="switchTab('books')">الكتب</button>
       <button class="admin-tab" onclick="switchTab('stains')">الصبغات</button>
       <button class="admin-tab" onclick="switchTab('filters')">الفلاتر</button>
+      <button class="admin-tab" onclick="switchTab('stands')">ستاند المجهر</button>
       <button class="admin-tab" onclick="switchTab('courses')">الدورات</button>
       <button class="admin-tab" onclick="switchTab('app')">📱 التطبيق</button>
     </div>
@@ -488,6 +515,9 @@
           <div class="admin-field"><label>رقم الهاتف</label><input type="text" id="p-phone" /></div>
           <div class="admin-field"><label>رقم واتساب (مع رمز الدولة بدون +)</label><input type="text" id="p-whatsapp" placeholder="9647701234567" /></div>
           <div class="admin-field"><label>رابط صورتك الشخصية</label><input type="text" id="p-avatar" placeholder="https://..." oninput="previewAvatar()" />
+            <button id="upload-btn-p-avatar" class="upload-btn" onclick="triggerImgUpload('p-avatar','avatar-preview',function(url){document.getElementById('avatar-preview').style.display='block';document.getElementById('avatar-preview-img').src=url;})">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+            </button>
             <div id="avatar-preview" style="margin-top:8px;display:none;">
               <img id="avatar-preview-img" src="" alt="معاينة" style="width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #1D9E75;" onerror="this.parentElement.style.display='none'" />
             </div>
@@ -516,6 +546,13 @@
         <div class="admin-success" id="filters-success">✅ تم الحفظ بنجاح</div>
         <button class="btn-add" onclick="addFilter()">+ إضافة فلتر جديد</button>
         <div id="filters-admin-list"></div>
+      </div>
+
+      <!-- ===== TAB: STANDS ===== -->
+      <div class="admin-section" id="tab-stands">
+        <div class="admin-success" id="stands-success">✅ تم الحفظ بنجاح</div>
+        <button class="btn-add" onclick="addStand()">+ إضافة ستاند جديد</button>
+        <div id="stands-admin-list"></div>
       </div>
 
       <!-- ===== TAB: COURSES ===== -->
@@ -595,6 +632,7 @@ let DATA = {
     { id: 'c1', title: 'دورة فحص البول المتقدم', sub: 'تشخيص ومختبر', icon: '🔬', iconBg: '#E1F5EE', desc: 'دورة شاملة تغطي جميع جوانب فحص البول من الناحية العملية والنظرية. مناسبة لأخصائيي المختبرات والطلاب.', features: ['الفحص الفيزيائي والكيميائي','تفسير النتائج المجهرية','حالات عملية وتشخيصية'], price: '', isNew: true },
     { id: 'c2', title: 'دورة الطفيليات المعوية', sub: 'علم الطفيليات', icon: '🧫', iconBg: '#FFF3E0', desc: 'دورة متخصصة في تشخيص وتمييز الطفيليات المعوية بالفحص المجهري. مع تطبيقات عملية على عينات حقيقية.', features: ['تمييز أنواع الطفيليات','أساليب تحضير العينات','تفسير نتائج الفحص'], price: '', isNew: false }
   ],
+  stands: [],
   app: {
     visible: true,
     title: 'تطبيق عبدالله مساعد',
@@ -622,6 +660,70 @@ const FIREBASE_CONFIG = {
 };
 const DOC_PATH = "site/data"; // مسار الوثيقة في Firestore
 
+// ===== CLOUDINARY CONFIG =====
+// 🔧 ضع هنا بياناتك من Cloudinary Console
+const CLOUDINARY_CLOUD_NAME = "dbtakclzx";
+const CLOUDINARY_UPLOAD_PRESET = "tojibeinty";
+
+async function uploadToCloudinary(file, onSuccess) {
+  const btn = event && event.target;
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ جاري الرفع...'; }
+  try {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+    const data = await res.json();
+    if (data.secure_url) {
+      onSuccess(data.secure_url);
+    } else {
+      alert('❌ فشل الرفع: ' + (data.error?.message || 'خطأ غير معروف'));
+    }
+  } catch(e) {
+    alert('❌ خطأ في الاتصال بـ Cloudinary');
+  }
+  if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة'; }
+}
+
+function triggerImgUpload(inputId, previewId, afterUpload) {
+  const picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = 'image/*';
+  picker.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const fakeEvent = { target: document.getElementById('upload-btn-' + inputId) };
+    // show spinner on button
+    const btn = document.getElementById('upload-btn-' + inputId);
+    if (btn) { btn.disabled = true; btn.innerHTML = '⏳ جاري الرفع...'; }
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.secure_url) {
+        const inputEl = document.getElementById(inputId);
+        if (inputEl) { inputEl.value = data.secure_url; inputEl.dispatchEvent(new Event('input')); }
+        const prevWrap = document.getElementById(previewId);
+        if (prevWrap) {
+          prevWrap.style.display = 'block';
+          const img = prevWrap.querySelector('img');
+          if (img) { img.src = data.secure_url; img.style.display = ''; }
+        }
+        if (afterUpload) afterUpload(data.secure_url);
+      } else {
+        alert('❌ فشل الرفع: ' + (data.error?.message || 'خطأ غير معروف'));
+      }
+    } catch(err) {
+      alert('❌ خطأ في الاتصال بـ Cloudinary');
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة'; }
+  };
+  picker.click();
+}
+
+
 let db = null;
 let _firebaseReady = false;
 
@@ -648,6 +750,7 @@ async function loadData() {
       if (snap.exists()) {
         const remote = snap.data();
         DATA = { ...DATA, ...remote };
+        if (!DATA.stands) DATA.stands = [];
       }
       return;
     } catch(e) { console.warn("Firestore read failed", e); }
@@ -655,6 +758,7 @@ async function loadData() {
   // fallback: localStorage
   const saved = localStorage.getItem('abid_data');
   if (saved) { try { DATA = JSON.parse(saved); } catch(e) {} }
+  if (!DATA.stands) DATA.stands = [];
 }
 
 async function saveData() {
@@ -719,6 +823,7 @@ function switchTab(tab) {
   if (tab === 'books') renderBooksAdmin();
   if (tab === 'stains') renderStainsAdmin();
   if (tab === 'filters') renderFiltersAdmin();
+  if (tab === 'stands') renderStandsAdmin();
   if (tab === 'courses') renderCoursesAdmin();
   if (tab === 'app') populateAppForm();
 }
@@ -830,6 +935,176 @@ function renderCourses() {
     </div>`).join('');
 }
 
+// ===== STANDS =====
+function renderStands() {
+  if (!DATA.stands) DATA.stands = [];
+  const grid = document.getElementById('stands-grid');
+  if (!grid) return;
+  if (DATA.stands.length === 0) {
+    grid.innerHTML = '<div style="color:#aaa;font-size:13px;grid-column:1/-1;text-align:center;padding:2rem;">لا توجد ستاندات بعد</div>';
+    return;
+  }
+  grid.innerHTML = DATA.stands.map(st => `
+    <div class="stand-card" onclick="openStand('${st.id}')">
+      ${st.isNew ? '<div class="new-badge">جديد</div>' : ''}
+      ${st.img ? `<img class="stand-img" src="${st.img}" alt="${st.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><div class="stand-img-placeholder" style="display:none;">🔭</div>` : `<div class="stand-img-placeholder" style="display:flex;">🔭</div>`}
+      <div class="stand-body">
+        <div class="stand-name">${st.name}</div>
+        <div class="stand-desc">${st.desc}</div>
+        ${st.price ? `<div class="card-price">${st.price}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function openStand(id) {
+  const st = DATA.stands.find(x => x.id === id);
+  if (!st) return;
+  let guideHtml = '';
+  const steps = (st.guideSteps || []).filter(s => s.img);
+  if (steps.length) {
+    const slides = steps.map((s, i) => `
+      <div class="guide-slide">
+        <img src="${s.img}" alt="خطوة ${i+1}" onerror="this.style.display='none'" oncontextmenu="return false" draggable="false"/>
+        <div class="guide-slide-caption">${s.caption || ''}</div>
+      </div>`).join('');
+    const dots = steps.map((_, i) => `<div class="guide-dot${i===0?' active':''}" onclick="_guideTo('stand-guide',${i})"></div>`).join('');
+    guideHtml = `
+      <div class="guide-section">
+        <div class="guide-label">📸 دليل الاستخدام المصور</div>
+        <div class="guide-slider-wrap" id="stand-guide-wrap">
+          <div class="guide-slider-track" id="stand-guide-track">${slides}</div>
+        </div>
+        <div class="guide-nav">
+          <button class="guide-btn" id="stand-guide-prev" onclick="_guidePrev('stand-guide')" ${steps.length<=1?'disabled':''}>→</button>
+          <div class="guide-dots" id="stand-guide-dots">${dots}</div>
+          <span class="guide-count" id="stand-guide-count">1 / ${steps.length}</span>
+          <button class="guide-btn" id="stand-guide-next" onclick="_guideNext('stand-guide')" ${steps.length<=1?'disabled':''}>←</button>
+        </div>
+      </div>`;
+  }
+  document.getElementById('modal-content').innerHTML = `
+    <div class="modal-badge-teal">🔭 ستاند المجهر</div>
+    <div class="modal-title">${st.name}</div>
+    ${st.img ? `<img class="modal-img" src="${st.img}" alt="${st.name}" onerror="this.style.display='none';" />` : ''}
+    <div class="modal-desc">${st.desc}</div>
+    ${guideHtml}
+    ${st.price ? `<div style="font-size:20px;font-weight:800;color:#1D9E75;margin:12px 0;">${st.price}</div>` : ''}
+    ${buildOrderForm(st.name)}`;
+  document.getElementById('modal-backdrop').classList.add('open');
+  if (steps.length > 1) _guideInitTouch('stand-guide', steps.length);
+}
+
+function renderStandsAdmin() {
+  if (!DATA.stands) DATA.stands = [];
+  document.getElementById('stands-admin-list').innerHTML = DATA.stands.map((st) => `
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${st.name}</div>
+        <div>
+          <button class="btn-delete" onclick="deleteStand('${st.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('stand-body-${st.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="stand-body-${st.id}">
+        <div class="admin-field"><label>الاسم</label><input type="text" id="stnd-n-${st.id}" value="${st.name}" /></div>
+        <div class="admin-field"><label>الوصف</label><textarea id="stnd-d-${st.id}">${st.desc||''}</textarea></div>
+        <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="stnd-pr-${st.id}" value="${st.price||''}" placeholder="مثال: 35,000 د.ع" /></div>
+        <div class="admin-field">
+          <label>رابط الصورة</label>
+          <input type="text" id="stnd-i-${st.id}" value="${st.img||''}" placeholder="https://..." oninput="previewStandImg('${st.id}')" />
+          <button id="upload-btn-stnd-i-${st.id}" class="upload-btn" onclick="triggerImgUpload('stnd-i-${st.id}','stnd-ipreview-${st.id}',null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+          </button>
+          <div id="stnd-ipreview-${st.id}" class="upload-preview" style="${st.img?'display:block;':''}">
+            <img src="${st.img||''}" alt="معاينة" onerror="this.style.display='none'" />
+          </div>
+        </div>
+        <div class="admin-field">
+          <label>📸 دليل الاستخدام المصور</label>
+          <div class="features-list" id="stnd-guide-${st.id}">
+            ${(st.guideSteps||[]).map((s,gi) => `
+              <div class="feature-row" id="stnd-guide-row-${st.id}-${gi}" style="flex-direction:column;align-items:stretch;gap:4px;background:#f9f9f9;padding:8px;border-radius:8px;border:0.5px solid #eee;">
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <span style="font-size:11px;color:#aaa;min-width:20px;">خ${gi+1}</span>
+                  <input type="text" id="stnd-gs-img-${st.id}-${gi}" value="${s.img||''}" placeholder="رابط صورة الخطوة..." style="flex:1;font-size:12px;direction:ltr;" />
+                  <button class="upload-btn" style="padding:4px 8px;margin-top:0;" onclick="triggerImgUpload('stnd-gs-img-${st.id}-${gi}',null,null)">↑</button>
+                  <button class="btn-remove-feat" onclick="removeStandGuideStep('${st.id}',${gi})">✕</button>
+                </div>
+                <input type="text" id="stnd-gs-cap-${st.id}-${gi}" value="${s.caption||''}" placeholder="وصف الخطوة..." style="font-size:12px;" />
+              </div>`).join('')}
+          </div>
+          <button class="btn-add-feat" style="margin-top:6px;" onclick="addStandGuideStep('${st.id}')">+ إضافة خطوة</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <input type="checkbox" id="stnd-new-${st.id}" ${st.isNew?'checked':''} />
+          <label for="stnd-new-${st.id}" style="font-size:13px;color:#555;">عرض شارة "جديد"</label>
+        </div>
+        <button class="btn-save" style="margin-top:12px;" onclick="saveStand('${st.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+async function addStand() {
+  if (!DATA.stands) DATA.stands = [];
+  const id = 'stand_' + Date.now();
+  DATA.stands.push({ id, name: 'ستاند جديد', desc: '', price: '', img: '', isNew: true, guideSteps: [] });
+  await saveData(); renderStandsAdmin(); renderStands();
+  setTimeout(() => { document.getElementById('stand-body-'+id) && document.getElementById('stand-body-'+id).classList.add('open'); }, 100);
+}
+
+async function saveStand(id) {
+  const st = DATA.stands.find(x => x.id === id);
+  if (!st) return;
+  st.name  = document.getElementById('stnd-n-'+id).value;
+  st.desc  = document.getElementById('stnd-d-'+id).value;
+  st.price = (document.getElementById('stnd-pr-'+id) ? document.getElementById('stnd-pr-'+id).value : '').trim();
+  st.img   = document.getElementById('stnd-i-'+id).value.trim();
+  st.isNew = document.getElementById('stnd-new-'+id).checked;
+  st.guideSteps = [];
+  let gi = 0;
+  while (document.getElementById('stnd-gs-img-'+id+'-'+gi)) {
+    const img = document.getElementById('stnd-gs-img-'+id+'-'+gi).value.trim();
+    const caption = document.getElementById('stnd-gs-cap-'+id+'-'+gi).value.trim();
+    if (img) st.guideSteps.push({ img, caption });
+    gi++;
+  }
+  await saveData(); renderStands(); renderStandsAdmin(); showSuccess('stands-success');
+}
+
+async function deleteStand(id) {
+  if (!confirm('هل تريد حذف هذا الستاند؟')) return;
+  DATA.stands = DATA.stands.filter(x => x.id !== id);
+  await saveData(); renderStandsAdmin(); renderStands();
+}
+
+async function addStandGuideStep(standId) {
+  const st = DATA.stands.find(x => x.id === standId);
+  if (!st) return;
+  if (!st.guideSteps) st.guideSteps = [];
+  st.guideSteps.push({ img: '', caption: '' });
+  await saveData(); renderStandsAdmin();
+  const body = document.getElementById('stand-body-'+standId);
+  if (body) body.classList.add('open');
+}
+
+async function removeStandGuideStep(standId, gi) {
+  const st = DATA.stands.find(x => x.id === standId);
+  if (!st || !st.guideSteps) return;
+  st.guideSteps.splice(gi, 1);
+  await saveData(); renderStandsAdmin();
+  const body = document.getElementById('stand-body-'+standId);
+  if (body) body.classList.add('open');
+}
+
+function previewStandImg(id) {
+  const url = document.getElementById('stnd-i-'+id).value.trim();
+  const wrap = document.getElementById('stnd-ipreview-'+id);
+  if (wrap) {
+    if (url) { wrap.style.display = 'block'; const img = wrap.querySelector('img'); if(img){img.src=url;img.style.display='';} }
+    else { wrap.style.display = 'none'; }
+  }
+}
+
 // ===== FILTERS =====
 function renderFilters() {
   if (!DATA.filters) DATA.filters = [];
@@ -866,7 +1141,11 @@ function renderFiltersAdmin() {
         <div class="admin-field"><label>اسم الفلتر</label><input type="text" id="fn-${f.id}" value="${f.name}" /></div>
         <div class="admin-field"><label>الوصف</label><textarea id="fd-${f.id}">${f.desc||''}</textarea></div>
         <div class="admin-field"><label>💰 السعر (اختياري)</label><input type="text" id="fpr-${f.id}" value="${f.price||''}" placeholder="مثال: 10,000 د.ع" /></div>
-        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="fi-${f.id}" value="${f.img||''}" placeholder="https://..." /></div>
+        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="fi-${f.id}" value="${f.img||''}" placeholder="https://..." />
+          <button id="upload-btn-fi-${f.id}" class="upload-btn" onclick="triggerImgUpload('fi-${f.id}',null,null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+          </button>
+        </div>
         <div class="admin-field"><label>📄 رابط PDF المعاينة (اختياري)</label><input type="text" id="fpdf-${f.id}" value="${f.previewPdf||''}" placeholder="https://drive.google.com/file/d/.../preview" style="direction:ltr;font-size:12px;" /></div>
         <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
           <input type="checkbox" id="fnew-${f.id}" ${f.isNew?'checked':''} />
@@ -1110,6 +1389,9 @@ function renderBooksAdmin() {
         <div class="admin-field">
           <label>رابط صورة الكتاب (اختياري — تستبدل لون الغلاف)</label>
           <input type="text" id="bimg-${b.id}" value="${b.img||''}" placeholder="https://..." oninput="previewBookImg('${b.id}')" />
+          <button id="upload-btn-bimg-${b.id}" class="upload-btn" onclick="triggerImgUpload('bimg-${b.id}','bimg-preview-${b.id}',null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+          </button>
           <div id="bimg-preview-${b.id}" style="margin-top:6px;${b.img?'':'display:none;'}">
             <img src="${b.img||''}" alt="معاينة" style="width:56px;height:72px;object-fit:cover;border-radius:4px;border:1px solid #ddd;" onerror="this.style.display='none'" />
           </div>
@@ -1205,7 +1487,11 @@ function renderStainsAdmin() {
       <div class="collapse-body" id="stain-body-${s.id}">
         <div class="admin-field"><label>الاسم</label><input type="text" id="sn-${s.id}" value="${s.name}" /></div>
         <div class="admin-field"><label>النوع</label><input type="text" id="st-${s.id}" value="${s.type}" /></div>
-        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="si-${s.id}" value="${s.img}" placeholder="https://..." /></div>
+        <div class="admin-field"><label>رابط الصورة</label><input type="text" id="si-${s.id}" value="${s.img}" placeholder="https://..." />
+          <button id="upload-btn-si-${s.id}" class="upload-btn" onclick="triggerImgUpload('si-${s.id}',null,null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+          </button>
+        </div>
         <div class="admin-field"><label>إيموجي (بديل الصورة)</label><input type="text" id="se-${s.id}" value="${s.emoji}" /></div>
         <div class="admin-field"><label>لون خلفية الإيموجي</label><input type="text" id="seb-${s.id}" value="${s.emojiBg}" /></div>
         <div class="admin-field"><label>الوصف</label><textarea id="sd-${s.id}">${s.desc}</textarea></div>
@@ -1304,6 +1590,9 @@ function renderCoursesAdmin() {
         <div class="admin-field">
           <label>رابط صورة الدورة (اختياري — تظهر في البطاقة والمودال)</label>
           <input type="text" id="cimg-${c.id}" value="${c.img||''}" placeholder="https://..." oninput="previewCourseImg('${c.id}')" />
+          <button id="upload-btn-cimg-${c.id}" class="upload-btn" onclick="triggerImgUpload('cimg-${c.id}','cimg-preview-${c.id}',null)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> رفع صورة
+          </button>
           <div id="cimg-preview-${c.id}" style="margin-top:6px;${c.img?'':'display:none;'}">
             <img src="${c.img||''}" alt="معاينة" style="width:100%;max-height:100px;object-fit:cover;border-radius:8px;border:1px solid #ddd;" onerror="this.style.display='none'" />
           </div>
@@ -1764,6 +2053,7 @@ document.addEventListener('keydown', e => {
   renderBooks();
   renderStains();
   renderFilters();
+  renderStands();
   renderCourses();
   renderApp();
 })();
