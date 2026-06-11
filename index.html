@@ -351,76 +351,9 @@
       .preview-modal { border-radius: 20px 20px 0 0; max-height: 94vh; }
       .preview-stage { padding: 8px; }
     }
-    /* ===== DARK MODE TOGGLE BUTTON ===== */
-    .theme-toggle { position: fixed; bottom: 24px; left: 20px; z-index: 999; width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.15); transition: background 0.3s, transform 0.2s; }
-    .theme-toggle:hover { transform: scale(1.1); }
-    .theme-toggle:active { transform: scale(0.95); }
-
-    /* ===== DARK MODE ===== */
-    body.dark { background: #0f0f0f; }
-    body.dark .page { }
-    body.dark .hero { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .hero-name { color: #f0f0f0; }
-    body.dark .hero-bio { color: #aaa; }
-    body.dark .contact-chip { background: #2a2a2a; border-color: #3a3a3a; color: #ccc; }
-    body.dark .contact-chip:hover { border-color: #1D9E75; }
-    body.dark .section-label { color: #666; }
-    body.dark .divider { background: #2a2a2a; }
-
-    body.dark .book-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .book-card:hover { border-color: #1D9E75; }
-    body.dark .book-title { color: #f0f0f0; }
-    body.dark .book-sub { color: #777; }
-    body.dark .book-badge { background: #0d3028; color: #1D9E75; }
-
-    body.dark .stain-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .stain-card:hover { border-color: #1D9E75; }
-    body.dark .stain-name { color: #f0f0f0; }
-    body.dark .stain-type { color: #777; }
-
-    body.dark .filter-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .filter-card:hover { border-color: #1D9E75; }
-    body.dark .filter-name { color: #f0f0f0; }
-    body.dark .filter-desc { color: #777; }
-
-    body.dark .stand-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .stand-card:hover { border-color: #1D9E75; }
-    body.dark .stand-name { color: #f0f0f0; }
-    body.dark .stand-desc { color: #777; }
-    body.dark .stand-img-placeholder { background: #0d3028; }
-
-    body.dark .course-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .course-card:hover { border-color: #1D9E75; }
-    body.dark .course-title { color: #f0f0f0; }
-    body.dark .course-sub { color: #777; }
-    body.dark .course-desc { color: #aaa; }
-    body.dark .course-feat { color: #888; }
-
-    body.dark .app-card { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .app-title { color: #f0f0f0; }
-    body.dark .app-sub { color: #aaa; }
-    body.dark .app-feat-label { color: #ccc; }
-
-    body.dark .modal-backdrop { background: rgba(0,0,0,0.85); }
-    body.dark .modal-box { background: #1a1a1a; border-color: #2a2a2a; }
-    body.dark .modal-title { color: #f0f0f0; }
-    body.dark .modal-desc { color: #aaa; }
-    body.dark .modal-close { color: #777; }
-    body.dark .modal-close:hover { color: #f0f0f0; }
-    body.dark .order-input { background: #111; border-color: #333; color: #f0f0f0; }
-    body.dark .order-input::placeholder { color: #555; }
-    body.dark .guide-section { background: #111; border-color: #2a2a2a; }
-    body.dark .guide-label { color: #888; }
-    body.dark .guide-slide-caption { color: #888; }
-    body.dark .guide-btn { background: #2a2a2a; color: #ccc; }
-    body.dark .guide-count { color: #666; }
-    body.dark .card-price { color: #1D9E75; }
-
-    body.dark .theme-toggle { background: #1a1a1a; box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
   </style>
 </head>
 <body>
-<button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="تغيير المود">🌙</button>
 <div class="page">
 
   <!-- ===== HERO ===== -->
@@ -843,24 +776,6 @@ async function saveData() {
     await window._fsSetDoc(window._fsDoc(db, ...DOC_PATH.split("/")), DATA);
   } catch(e) { console.warn("Firestore write failed", e); }
 }
-
-// ===== DARK MODE =====
-function toggleTheme() {
-  const isDark = document.body.classList.toggle('dark');
-  localStorage.setItem('abid_theme', isDark ? 'dark' : 'light');
-  document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
-}
-// تطبيق الثيم المحفوظ عند فتح الصفحة
-(function() {
-  const saved = localStorage.getItem('abid_theme');
-  if (saved === 'dark') {
-    document.body.classList.add('dark');
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('theme-toggle');
-      if (btn) btn.textContent = '☀️';
-    });
-  }
-})();
 
 // ===== HASH =====
 // Simple djb2 hash — works on file:// and https://
