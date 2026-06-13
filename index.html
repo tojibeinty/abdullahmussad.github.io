@@ -222,6 +222,45 @@
     .img-field-row input[type="text"] { flex: 1; min-width: 0; }
     .img-field-row .upload-btn { flex-shrink: 0; margin-top: 0; white-space: nowrap; }
 
+    /* ===== VIDEO SLIDER ===== */
+    .video-section { margin-bottom: 2rem; }
+    .video-slider-wrap { position: relative; overflow: hidden; border-radius: 18px; }
+    .video-slider-track { display: flex; transition: transform 0.35s cubic-bezier(.4,0,.2,1); will-change: transform; direction: ltr; }
+    .video-slide { flex: 0 0 100%; width: 100%; min-width: 0; position: relative; cursor: pointer; }
+    .video-thumb-wrap { position: relative; width: 100%; padding-top: 56.25%; background: #111; border-radius: 18px; overflow: hidden; }
+    .video-thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+    .video-slide:hover .video-thumb { transform: scale(1.03); }
+    .video-thumb-placeholder { position: absolute; inset: 0; background: linear-gradient(135deg,#0d1f1a,#0a2e22); display: flex; align-items: center; justify-content: center; font-size: 48px; }
+    .video-play-btn { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .video-play-circle { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.92); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 24px rgba(0,0,0,0.35); transition: transform 0.2s, background 0.2s; }
+    .video-slide:hover .video-play-circle { transform: scale(1.1); background: #fff; }
+    .video-play-circle svg { width: 26px; height: 26px; margin-right: -3px; }
+    .video-info { padding: 10px 4px 4px; }
+    .video-title { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+    .video-sub { font-size: 12px; color: #888; }
+    .video-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 12px; }
+    .video-nav-btn { width: 36px; height: 36px; border-radius: 50%; border: 0.5px solid #ddd; background: #fff; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .video-nav-btn:hover:not(:disabled) { background: #E1F5EE; border-color: #1D9E75; }
+    .video-nav-btn:disabled { opacity: 0.3; cursor: default; }
+    .video-dots { display: flex; gap: 6px; align-items: center; }
+    .video-dot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; transition: background 0.2s, transform 0.2s; cursor: pointer; }
+    .video-dot.active { background: #1D9E75; transform: scale(1.3); }
+    .video-counter { font-size: 12px; color: #aaa; min-width: 36px; text-align: center; }
+
+    /* مودال الفيديو */
+    .video-modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
+    .video-modal-backdrop.open { display: flex; }
+    .video-modal-box { width: 100%; max-width: 700px; position: relative; }
+    .video-modal-close { position: absolute; top: -40px; left: 0; background: rgba(255,255,255,0.15); border: none; color: #fff; border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+    .video-modal-close:hover { background: rgba(255,255,255,0.25); }
+    .video-iframe-wrap { position: relative; padding-top: 56.25%; border-radius: 14px; overflow: hidden; background: #000; }
+    .video-iframe-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    body.dark .video-title { color: #f0f0f0; }
+    body.dark .video-sub { color: #777; }
+    body.dark .video-nav-btn { background: #1a1a1a; border-color: #333; color: #ccc; }
+    body.dark .video-dot { background: #333; }
+
     /* ===== PRICE TAG ===== */
     .card-price {
       margin-top: 8px;
@@ -402,18 +441,39 @@
     body.dark .app-feat-label { color: #ccc; }
 
     body.dark .modal-backdrop { background: rgba(0,0,0,0.85); }
-    body.dark .modal-box { background: #1a1a1a; border-color: #2a2a2a; }
+    body.dark .modal { background: #1a1a1a; }
+    body.dark .modal-handle { background: #333; }
     body.dark .modal-title { color: #f0f0f0; }
     body.dark .modal-desc { color: #aaa; }
     body.dark .modal-close { color: #777; }
     body.dark .modal-close:hover { color: #f0f0f0; }
+    body.dark .modal-badge-teal { background: #0d3028; color: #1D9E75; }
+    body.dark .modal-badge-blue { background: #0d1f3a; color: #5ba3e0; }
+    body.dark .modal-badge-orange { background: #2a1800; color: #f59e0b; }
+    body.dark .modal-img { background: #111; }
+    body.dark .feature-item { color: #aaa; }
+    body.dark .close-btn { background: #2a2a2a; color: #aaa; }
+    body.dark .close-btn:hover { color: #f0f0f0; }
+
+    body.dark .order-form { background: #111; }
+    body.dark .order-form h3 { color: #f0f0f0; }
+    body.dark .form-group label { color: #777; }
+    body.dark .form-group input,
+    body.dark .form-group textarea { background: #1a1a1a; border-color: #333; color: #f0f0f0; }
+    body.dark .form-group input::placeholder,
+    body.dark .form-group textarea::placeholder { color: #555; }
     body.dark .order-input { background: #111; border-color: #333; color: #f0f0f0; }
     body.dark .order-input::placeholder { color: #555; }
+
     body.dark .guide-section { background: #111; border-color: #2a2a2a; }
-    body.dark .guide-label { color: #888; }
-    body.dark .guide-slide-caption { color: #888; }
-    body.dark .guide-btn { background: #2a2a2a; color: #ccc; }
+    body.dark .guide-label { background: #0d3028; color: #1D9E75; }
+    body.dark .guide-slide-caption { background: #1a1a1a; color: #888; border-top-color: #2a2a2a; }
+    body.dark .guide-slider-wrap { background: #111; }
+    body.dark .guide-btn { background: #2a2a2a; border-color: #333; color: #ccc; }
     body.dark .guide-count { color: #666; }
+    body.dark .guide-dot { background: #333; }
+
+    body.dark .new-badge { background: #0d3028; color: #1D9E75; }
     body.dark .card-price { color: #1D9E75; }
 
     body.dark .theme-toggle { background: #1a1a1a; box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
@@ -458,6 +518,9 @@
     </div>
   </div>
 
+  <!-- ===== VIDEOS ===== -->
+  <div id="video-section-wrap"></div>
+
   <!-- ===== COURSES ===== -->
   <div class="section-label">الدورات المختبرية</div>
   <div class="courses-grid" id="courses-grid"></div>
@@ -496,6 +559,14 @@
   <!-- ===== APP ===== -->
   <div id="app-section-wrap"></div>
 
+</div>
+
+<!-- ===== VIDEO MODAL ===== -->
+<div class="video-modal-backdrop" id="video-modal-backdrop" onclick="closeVideoModal(event)">
+  <div class="video-modal-box">
+    <button class="video-modal-close" onclick="closeVideoModalBtn()">✕ إغلاق</button>
+    <div class="video-iframe-wrap" id="video-iframe-wrap"></div>
+  </div>
 </div>
 
 <!-- ===== BOOK PREVIEW MODAL ===== -->
@@ -567,6 +638,7 @@
     </div>
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="switchTab('profile')">الملف الشخصي</button>
+      <button class="admin-tab" onclick="switchTab('videos')">🎬 الفيديوهات</button>
       <button class="admin-tab" onclick="switchTab('books')">الكتب</button>
       <button class="admin-tab" onclick="switchTab('stains')">الصبغات</button>
       <button class="admin-tab" onclick="switchTab('filters')">الفلاتر</button>
@@ -600,6 +672,16 @@
           <div class="admin-field"><label>انستغرام (اسم المستخدم)</label><input type="text" id="p-instagram" /></div>
           <button class="btn-save" onclick="saveProfile()">💾 حفظ</button>
         </div>
+      </div>
+
+      <!-- ===== TAB: VIDEOS ===== -->
+      <div class="admin-section" id="tab-videos">
+        <div class="admin-success" id="videos-success">✅ تم الحفظ بنجاح</div>
+        <div style="background:#E1F5EE;border-radius:10px;padding:10px 14px;font-size:12px;color:#085041;margin-bottom:1rem;">
+          💡 أضف رابط YouTube مثل: <span style="font-family:monospace;direction:ltr;display:inline-block;">https://www.youtube.com/watch?v=XXXXXXX</span>
+        </div>
+        <button class="btn-add" onclick="addVideo()">+ إضافة فيديو</button>
+        <div id="videos-admin-list"></div>
       </div>
 
       <!-- ===== TAB: BOOKS ===== -->
@@ -708,6 +790,7 @@ let DATA = {
     { id: 'c2', title: 'دورة الطفيليات المعوية', sub: 'علم الطفيليات', icon: '🧫', iconBg: '#FFF3E0', desc: 'دورة متخصصة في تشخيص وتمييز الطفيليات المعوية بالفحص المجهري. مع تطبيقات عملية على عينات حقيقية.', features: ['تمييز أنواع الطفيليات','أساليب تحضير العينات','تفسير نتائج الفحص'], price: '', isNew: false }
   ],
   stands: [],
+  videos: [],
   app: {
     visible: true,
     title: 'تطبيق عبدالله مساعد',
@@ -826,6 +909,7 @@ async function loadData() {
         const remote = snap.data();
         DATA = { ...DATA, ...remote };
         if (!DATA.stands) DATA.stands = [];
+        if (!DATA.videos) DATA.videos = [];
       }
       return;
     } catch(e) { console.warn("Firestore read failed", e); }
@@ -834,6 +918,7 @@ async function loadData() {
   const saved = localStorage.getItem('abid_data');
   if (saved) { try { DATA = JSON.parse(saved); } catch(e) {} }
   if (!DATA.stands) DATA.stands = [];
+  if (!DATA.videos) DATA.videos = [];
 }
 
 async function saveData() {
@@ -913,6 +998,7 @@ function switchTab(tab) {
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   event.target.classList.add('active');
   document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'videos') renderVideosAdmin();
   if (tab === 'books') renderBooksAdmin();
   if (tab === 'stains') renderStainsAdmin();
   if (tab === 'filters') renderFiltersAdmin();
@@ -1026,6 +1112,168 @@ function renderCourses() {
       <div class="course-sub">${c.sub}</div>
       ${c.price ? `<div class="card-price">${c.price}</div>` : ''}
     </div>`).join('');
+}
+
+// ===== VIDEOS =====
+function getYouTubeId(url) {
+  if (!url) return '';
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : '';
+}
+
+function getYouTubeThumb(url) {
+  const id = getYouTubeId(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : '';
+}
+
+let _videoIdx = 0;
+
+function renderVideos() {
+  if (!DATA.videos) DATA.videos = [];
+  const wrap = document.getElementById('video-section-wrap');
+  if (!wrap) return;
+  if (DATA.videos.length === 0) { wrap.innerHTML = ''; return; }
+
+  const slides = DATA.videos.map((v, i) => {
+    const thumb = getYouTubeThumb(v.url);
+    return `
+      <div class="video-slide" onclick="openVideoModal('${v.url}')">
+        <div class="video-thumb-wrap">
+          ${thumb
+            ? `<img class="video-thumb" src="${thumb}" alt="${v.title||''}" loading="lazy" />`
+            : `<div class="video-thumb-placeholder">🎬</div>`}
+          <div class="video-play-btn">
+            <div class="video-play-circle">
+              <svg viewBox="0 0 24 24" fill="#1D9E75"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+        </div>
+        ${v.title ? `<div class="video-info"><div class="video-title">${v.title}</div>${v.sub?`<div class="video-sub">${v.sub}</div>`:''}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  const dots = DATA.videos.map((_, i) =>
+    `<div class="video-dot${i===0?' active':''}" onclick="_videoGoto(${i})"></div>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div class="video-section">
+      <div class="section-label">فيديوهات تعريفية</div>
+      <div class="video-slider-wrap" id="video-slider-wrap">
+        <div class="video-slider-track" id="video-slider-track">${slides}</div>
+      </div>
+      ${DATA.videos.length > 1 ? `
+      <div class="video-nav">
+        <button class="video-nav-btn" id="video-prev" onclick="_videoGoto(_videoIdx-1)">→</button>
+        <div class="video-dots" id="video-dots">${dots}</div>
+        <span class="video-counter" id="video-counter">1 / ${DATA.videos.length}</span>
+        <button class="video-nav-btn" id="video-next" onclick="_videoGoto(_videoIdx+1)">←</button>
+      </div>` : ''}
+    </div>
+    <div class="divider"></div>`;
+
+  _videoIdx = 0;
+  if (DATA.videos.length > 1) _videoInitTouch();
+}
+
+function _videoGoto(i) {
+  if (!DATA.videos || DATA.videos.length === 0) return;
+  const n = DATA.videos.length;
+  _videoIdx = Math.max(0, Math.min(n - 1, i));
+  const track = document.getElementById('video-slider-track');
+  if (track) track.style.transform = `translateX(${_videoIdx * 100}%)`;
+  document.querySelectorAll('.video-dot').forEach((d, j) => d.classList.toggle('active', j === _videoIdx));
+  const ctr = document.getElementById('video-counter');
+  if (ctr) ctr.textContent = `${_videoIdx + 1} / ${n}`;
+  const prev = document.getElementById('video-prev');
+  const next = document.getElementById('video-next');
+  if (prev) prev.disabled = _videoIdx === 0;
+  if (next) next.disabled = _videoIdx === n - 1;
+}
+
+function _videoInitTouch() {
+  const wrap = document.getElementById('video-slider-wrap');
+  if (!wrap) return;
+  let startX = 0, moved = false;
+  wrap.addEventListener('touchstart', e => { startX = e.touches[0].clientX; moved = false; }, { passive: true });
+  wrap.addEventListener('touchmove', e => { moved = true; }, { passive: true });
+  wrap.addEventListener('touchend', e => {
+    if (!moved) return;
+    const diff = startX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) _videoGoto(_videoIdx + (diff > 0 ? 1 : -1));
+  });
+}
+
+function openVideoModal(url) {
+  const id = getYouTubeId(url);
+  if (!id) return;
+  const wrap = document.getElementById('video-iframe-wrap');
+  wrap.innerHTML = `<iframe src="https://www.youtube.com/embed/${id}?autoplay=1&rel=0" allowfullscreen allow="autoplay"></iframe>`;
+  document.getElementById('video-modal-backdrop').classList.add('open');
+}
+
+function closeVideoModal(e) {
+  if (e.target === document.getElementById('video-modal-backdrop')) closeVideoModalBtn();
+}
+
+function closeVideoModalBtn() {
+  document.getElementById('video-modal-backdrop').classList.remove('open');
+  document.getElementById('video-iframe-wrap').innerHTML = '';
+}
+
+function renderVideosAdmin() {
+  if (!DATA.videos) DATA.videos = [];
+  document.getElementById('videos-admin-list').innerHTML = DATA.videos.length === 0
+    ? '<div style="color:#aaa;font-size:13px;text-align:center;padding:2rem;">لا توجد فيديوهات بعد</div>'
+    : DATA.videos.map((v, i) => `
+    <div class="admin-card" id="vid-card-${v.id}">
+      <div class="admin-card-header">
+        <div class="admin-card-title">${v.title || 'فيديو ' + (i+1)}</div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button onclick="moveVideo(${i},-1)" style="background:#f0f0f0;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;" ${i===0?'disabled':''}>↑</button>
+          <button onclick="moveVideo(${i},1)" style="background:#f0f0f0;border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:13px;" ${i===DATA.videos.length-1?'disabled':''}>↓</button>
+          <button class="btn-delete" onclick="deleteVideo('${v.id}')">🗑 حذف</button>
+          <button class="btn-edit" onclick="toggleCollapse('vid-body-${v.id}')">✏️ تعديل</button>
+        </div>
+      </div>
+      <div class="collapse-body" id="vid-body-${v.id}">
+        <div class="admin-field"><label>رابط YouTube</label><input type="text" id="vid-url-${v.id}" value="${v.url||''}" placeholder="https://www.youtube.com/watch?v=..." style="direction:ltr;" /></div>
+        <div class="admin-field"><label>عنوان الفيديو</label><input type="text" id="vid-title-${v.id}" value="${v.title||''}" placeholder="مثال: مقدمة تعريفية" /></div>
+        <div class="admin-field"><label>وصف مختصر (اختياري)</label><input type="text" id="vid-sub-${v.id}" value="${v.sub||''}" placeholder="مثال: تعرف على عبدالله مساعد" /></div>
+        ${v.url ? `<div style="margin-bottom:10px;"><img src="${getYouTubeThumb(v.url)}" style="width:100%;max-height:120px;object-fit:cover;border-radius:8px;border:1px solid #eee;" onerror="this.style.display='none'" /></div>` : ''}
+        <button class="btn-save" onclick="saveVideo('${v.id}')">💾 حفظ</button>
+      </div>
+    </div>`).join('');
+}
+
+async function addVideo() {
+  if (!DATA.videos) DATA.videos = [];
+  const id = 'vid_' + Date.now();
+  DATA.videos.push({ id, url: '', title: '', sub: '' });
+  await saveData(); renderVideosAdmin(); renderVideos();
+  setTimeout(() => { const b = document.getElementById('vid-body-'+id); if(b) b.classList.add('open'); }, 100);
+}
+
+async function saveVideo(id) {
+  const v = DATA.videos.find(x => x.id === id);
+  if (!v) return;
+  v.url   = document.getElementById('vid-url-'+id).value.trim();
+  v.title = document.getElementById('vid-title-'+id).value.trim();
+  v.sub   = document.getElementById('vid-sub-'+id).value.trim();
+  await saveData(); renderVideos(); renderVideosAdmin(); showSuccess('videos-success');
+}
+
+async function deleteVideo(id) {
+  if (!confirm('حذف هذا الفيديو؟')) return;
+  DATA.videos = DATA.videos.filter(x => x.id !== id);
+  await saveData(); renderVideosAdmin(); renderVideos();
+}
+
+async function moveVideo(i, dir) {
+  const j = i + dir;
+  if (j < 0 || j >= DATA.videos.length) return;
+  [DATA.videos[i], DATA.videos[j]] = [DATA.videos[j], DATA.videos[i]];
+  await saveData(); renderVideosAdmin(); renderVideos();
 }
 
 // ===== STANDS =====
@@ -2156,6 +2404,7 @@ document.addEventListener('keydown', e => {
 
   document.getElementById('loading-screen').remove();
   renderProfile();
+  renderVideos();
   renderBooks();
   renderStains();
   renderFilters();
